@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Minería Profunda</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -35,6 +35,27 @@ canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
 #setPanel select{font-family:inherit;font-size:11px;background:#2a2342;color:#dcd6ee;border:1px solid #494261;border-radius:4px;padding:2px 4px}
 #setPanel input[type=checkbox]{accent-color:#ffd54f}
 #wTime{color:#9b8fc4}
+/* ===== Móvil / táctil ===== */
+body{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+canvas{touch-action:none}
+#topbar,#menuBtn,#buyFab,#dpad{display:none}
+#topbar{position:absolute;top:0;left:0;right:0;z-index:8;background:rgba(17,14,28,.82);border-bottom:2px solid #2c2440;padding:6px 52px 6px 10px;font-size:13px;font-weight:bold;justify-content:space-between;align-items:center;gap:8px;white-space:nowrap}
+#topbar span{overflow:hidden;text-overflow:ellipsis}
+#menuBtn{position:absolute;top:5px;right:6px;z-index:21;width:38px;height:38px;align-items:center;justify-content:center;background:#2a2342;border:2px solid #494261;border-radius:8px;font-size:18px;color:#dcd6ee;cursor:pointer}
+#buyFab{position:absolute;right:12px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:8;padding:13px 16px;font-family:inherit;font-weight:bold;font-size:14px;color:#1a1408;background:#ffd54f;border:2px solid #b8932a;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.5)}
+#buyFab:disabled{background:#494261;color:#8d80b8;border-color:#322a4d}
+#dpad{position:absolute;left:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:8;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(3,58px);gap:4px;touch-action:none}
+.dbtn{display:flex;align-items:center;justify-content:center;background:rgba(42,35,66,.75);border:2px solid rgba(73,66,97,.9);border-radius:10px;font-size:20px;color:#dcd6ee;touch-action:none}
+.dbtn.act{background:rgba(255,213,79,.85);color:#1a1408;border-color:#b8932a}
+#dUp{grid-area:1/2}#dLeft{grid-area:2/1}#dRight{grid-area:2/3}#dDown{grid-area:3/2}
+@media(pointer:coarse){#dpad{display:grid}#buyFab{display:block}}
+@media(max-width:700px){
+ #side{position:fixed;top:0;right:0;bottom:0;width:min(300px,85vw);z-index:20;transform:translateX(105%);transition:transform .25s;box-shadow:-6px 0 20px rgba(0,0,0,.6)}
+ #side.open{transform:none}
+ #topbar{display:flex}#menuBtn{display:flex}
+ #overlay h1{font-size:24px}
+ #banner{font-size:22px;letter-spacing:3px}
+}
 #overlay{position:absolute;inset:0;background:rgba(8,6,14,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:5;text-align:center;padding:20px}
 #overlay h1{font-size:34px;color:#ffd54f;text-shadow:3px 3px 0 #5d4015;letter-spacing:3px}
 #overlay p{font-size:13px;color:#b3a8d9;max-width:480px;line-height:1.7}
@@ -53,6 +74,18 @@ canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
     <canvas id="game"></canvas>
     <div id="toast"></div>
     <div id="banner"></div>
+    <div id="topbar">
+      <span id="tDepth">0 m</span>
+      <span id="tMoney" class="gold">$0</span>
+      <span id="tWeather">☀️ 2:00</span>
+    </div>
+    <div id="dpad">
+      <div class="dbtn" id="dUp" data-d="up">▲</div>
+      <div class="dbtn" id="dLeft" data-d="left">◀</div>
+      <div class="dbtn" id="dRight" data-d="right">▶</div>
+      <div class="dbtn" id="dDown" data-d="down">▼</div>
+    </div>
+    <button id="buyFab">⛏ $50</button>
     <div id="overlay">
       <h1>MINERÍA PROFUNDA</h1>
       <p>Excavá hacia el centro de la Tierra: 15 capas, del pasto al ABISMO (23.5MM).<br><br>
@@ -62,6 +95,7 @@ canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
       <button id="startBtn">⛏ EMPEZAR</button>
     </div>
   </div>
+  <div id="menuBtn">☰</div>
   <div id="side">
     <div class="panel">
       <div class="lbl">PROFUNDIDAD</div>
@@ -230,6 +264,18 @@ addEventListener('keyup',e=>{const d=KMAP[e.code];
  if(d){keys[d]=false;const i=dirStack.indexOf(d);if(i>=0)dirStack.splice(i,1);}});
 function curDir(){const V={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
  for(let i=dirStack.length-1;i>=0;i--){if(keys[dirStack[i]])return V[dirStack[i]];}return null;}
+// D-pad táctil (pointer events, multi-touch)
+function pressDir(d){if(!keys[d]){keys[d]=true;dirStack.push(d);}}
+function releaseDir(d){keys[d]=false;const i=dirStack.indexOf(d);if(i>=0)dirStack.splice(i,1);}
+document.querySelectorAll('.dbtn').forEach(b=>{const d=b.dataset.d;
+ const on=e=>{e.preventDefault();pressDir(d);b.classList.add('act');};
+ const off=e=>{e.preventDefault();releaseDir(d);b.classList.remove('act');};
+ b.addEventListener('pointerdown',on);
+ b.addEventListener('pointerup',off);
+ b.addEventListener('pointercancel',off);
+ b.addEventListener('pointerleave',off);});
+addEventListener('contextmenu',e=>{
+ if(e.target.closest('#dpad,#buyFab,canvas'))e.preventDefault();});
 
 // ================= AUDIO (Web Audio API) =================
 let actx=null,master=null,ambGain=null;
@@ -348,17 +394,18 @@ function regenTerrain(){regenT=0;
 // FX de clima (en pantalla)
 let wfx=[];
 function initWeatherFx(){wfx=[];const f=WX().fx;
- const n=f==='storm'?120:f==='rain'?90:f==='snow'?70:0;
+ let n=f==='storm'?120:f==='rain'?90:f==='snow'?70:0;
+ if(COARSE)n=Math.round(n*0.5);
  for(let i=0;i<n;i++)wfx.push({x:Math.random()*2000,y:Math.random()*1500,
   sp:f==='snow'?30+Math.random()*50:500+Math.random()*350,ph:Math.random()*6.3});}
 function updWeatherFx(dt){const f=WX().fx;if(!f||f==='fog')return;
- const ch=cv.height||800,cw=cv.width||1200;
+ const ch=VH,cw=VW;
  for(const p of wfx){p.y+=p.sp*dt;
   p.x+=(f==='snow'?Math.sin(perf*2+p.ph)*22:-90)*dt;
   if(p.y>ch){p.y=-10;p.x=Math.random()*cw;}
   if(p.x<0)p.x+=cw;if(p.x>cw)p.x-=cw;}}
 function drawWeatherFx(){const f=WX().fx;if(!f)return;
- const cw=cv.width,ch=cv.height;
+ const cw=VW,ch=VH;
  if(f==='rain'||f==='storm'){ctx.strokeStyle='rgba(158,200,255,0.4)';ctx.lineWidth=1.5;
   ctx.beginPath();
   for(const p of wfx){ctx.moveTo(p.x,p.y);ctx.lineTo(p.x+2.5,p.y-13);}
@@ -409,17 +456,21 @@ function makeTiles(){
 
 // ================= RENDER =================
 const cv=document.getElementById('game'),ctx=cv.getContext('2d');
-let camX=0,camY=-260;
+let camX=0,camY=-260,VW=800,VH=600;
+const COARSE=matchMedia('(pointer:coarse)').matches;
 function fit(){const b=document.getElementById('cvbox');
- cv.width=b.clientWidth;cv.height=b.clientHeight;ctx.imageSmoothingEnabled=false;}
+ const dpr=Math.min(2,window.devicePixelRatio||1);
+ VW=b.clientWidth;VH=b.clientHeight;
+ cv.width=Math.round(VW*dpr);cv.height=Math.round(VH*dpr);
+ ctx.setTransform(dpr,0,0,dpr,0,0);ctx.imageSmoothingEnabled=false;}
 addEventListener('resize',fit);
-function updateCam(dt){const cw=cv.width,ch=cv.height;
+function updateCam(dt){const cw=VW,ch=VH;
  const maxX=W*TILE-cw;
  const tx=maxX<0?maxX/2:Math.max(0,Math.min(maxX,player.px+16-cw/2));
  const ty=Math.max(-ch*0.55,player.py+16-ch/2);
  const k=Math.min(1,dt*8);camX+=(tx-camX)*k;camY+=(ty-camY)*k;}
 
-function render(){const cw=cv.width,ch=cv.height;
+function render(){const cw=VW,ch=VH;
  ctx.fillStyle='#08060d';ctx.fillRect(0,0,cw,ch);
  // cielo
  const horizon=-camY;
@@ -515,14 +566,24 @@ function sfxLayer(){tone(294,0.35,'triangle',0.14);
 buyBtn.addEventListener('click',buy);
 const wName=document.getElementById('wName'),wDesc=document.getElementById('wDesc'),
  wTime=document.getElementById('wTime');
+const tDepth=document.getElementById('tDepth'),tMoney=document.getElementById('tMoney'),
+ tWeather=document.getElementById('tWeather'),buyFab=document.getElementById('buyFab'),
+ sideEl=document.getElementById('side'),menuBtn=document.getElementById('menuBtn');
+menuBtn.addEventListener('click',()=>sideEl.classList.toggle('open'));
+buyFab.addEventListener('click',buy);
 function uiTick(){
  elDepth.textContent=fmtDepth(depth);
  elRec.textContent='Récord: '+fmtDepth(record);
  elLayer.textContent=LAYERS[curLi].n+' · '+blocksMined+' bloques';
  const wt=Math.max(0,weatherT);
- wTime.textContent=Math.floor(wt/60)+':'+String(Math.floor(wt%60)).padStart(2,'0');
+ const wts=Math.floor(wt/60)+':'+String(Math.floor(wt%60)).padStart(2,'0');
+ wTime.textContent=wts;
+ tDepth.textContent=fmtDepth(depth);
+ tWeather.textContent=WX().ico+' '+wts;
  if(uiDirty){uiDirty=false;
   wName.textContent=WX().ico+' '+WX().n;wDesc.textContent=WX().desc;
+  tMoney.textContent='$'+fmt(money);
+  buyFab.textContent='⛏ $'+fmt(cost);buyFab.disabled=money<cost;
   elMoney.textContent='$'+fmt(money);
   elLvl.textContent=lvl;elDmg.textContent=fmt(pickDmg);
   elMul.textContent='×'+fmt(mult);
