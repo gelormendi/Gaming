@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Il Barto Gaming — Free Browser Games</title>
+  <meta name="description" content="Il Barto Gaming is a collection of free browser-based mini games. No downloads, no sign-up. Just play.">
+  <meta name="keywords" content="free browser games, html5 games, mini games, deep mining, casual games">
+  <meta property="og:title" content="Il Barto Gaming — Free Browser Games">
+  <meta property="og:description" content="Free browser mini games. Play instantly, no downloads required.">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://ilbartogaming.com/">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;800&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --yellow: #FFE135;
+      --orange: #FF7043;
+      --purple: #7B2FBE;
+      --pink: #FF4081;
+      --teal: #00BCD4;
+      --bg: #FFF8E7;
+      --card-bg: #ffffff;
+      --text: #2D2D2D;
+      --text-light: #666;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--purple);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 0 #5a1a9a;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 80px;
+      height: 80px;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    .logo-text {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.8rem;
+      color: var(--yellow);
+      letter-spacing: 1px;
+      text-shadow: 3px 3px 0 #5a1a9a;
+      line-height: 1;
+    }
+    .logo-text span {
+      color: #fff;
+    }
+
+    nav a {
+      color: #e8d4ff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-left: 24px;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--yellow); }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 56px 24px 40px;
+      background: linear-gradient(135deg, #7B2FBE 0%, #FF4081 100%);
+      clip-path: ellipse(100% 90% at 50% 0%);
+      padding-bottom: 80px;
+    }
+
+    .hero h1 {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      color: #fff;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: #f0d8ff;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* ── GAMES GRID ── */
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px 64px;
+    }
+
+    .section-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.8rem;
+      color: var(--purple);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 3px;
+      background: linear-gradient(90deg, var(--purple), transparent);
+      border-radius: 2px;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 28px;
+    }
+
+    .game-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 6px 0 #ddd;
+      transition: transform 0.18s, box-shadow 0.18s;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      border: 3px solid #eee;
+    }
+    .game-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 0 #ccc;
+    }
+
+    .card-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      background: linear-gradient(135deg, #1a1030 0%, #3d2070 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-thumb .game-emoji {
+      z-index: 1;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+    }
+
+    /* pixel grid decoration */
+    .card-thumb::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--yellow);
+      color: #333;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 20px;
+    }
+
+    .card-body {
+      padding: 18px 20px 20px;
+    }
+
+    .card-body h2 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.3rem;
+      color: var(--purple);
+      margin-bottom: 6px;
+    }
+
+    .card-body p {
+      font-size: 0.88rem;
+      color: var(--text-light);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      background: #f3e8ff;
+      color: var(--purple);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .play-btn {
+      display: inline-block;
+      margin-top: 14px;
+      background: var(--purple);
+      color: #fff;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1rem;
+      padding: 9px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 4px 0 #5a1a9a;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .play-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #5a1a9a;
+    }
+    .play-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #5a1a9a;
+    }
+
+    /* ── COMING SOON CARD ── */
+    .game-card.coming-soon {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .card-thumb.grey {
+      background: linear-gradient(135deg, #888 0%, #555 100%);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--purple);
+      color: #d8b8ff;
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 0.85rem;
+    }
+    footer a { color: var(--yellow); text-decoration: none; }
+    footer strong { color: #fff; font-family: 'Fredoka One', cursive; font-size: 1rem; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      header { padding: 12px 16px; }
+      .logo-text { font-size: 1.4rem; }
+      nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a class="logo" href="index.html">
+    <img class="logo-icon" src="logo.png" alt="Il Barto Gaming logo">
+    <div>
+      <div class="logo-text">il barto <span>gaming</span></div>
+    </div>
+  </a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="deep-mining.html">Games</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Free Games, Zero Fuss ⛏️</h1>
+  <p>Jump straight into fun browser mini games. No downloads, no accounts — just click and play.</p>
+</section>
+
+<!-- GAMES -->
+<section class="section">
+  <h2 class="section-title">🎮 Games</h2>
+  <div class="games-grid">
+
+    <!-- Deep Mining -->
+    <a class="game-card" href="deep-mining.html">
+      <div class="card-thumb">
+        <span class="game-emoji">⛏️⚙️</span>
+        <span class="card-badge">New</span>
+      </div>
+      <div class="card-body">
+        <h2>Deep Mining</h2>
+        <p>Dig deep, collect rare minerals, manage your inventory and upgrade your gear. How far can you go?</p>
+        <div class="card-tags">
+          <span class="tag">Idle</span>
+          <span class="tag">Strategy</span>
+          <span class="tag">Pixel</span>
+        </div>
+        <span class="play-btn">▶ Play Now</span>
+      </div>
+    </a>
+
+    <!-- Coming Soon placeholder -->
+    <div class="game-card coming-soon">
+      <div class="card-thumb grey">
+        <span class="game-emoji">🎲</span>
+        <span class="card-badge">Soon</span>
+      </div>
+      <div class="card-body">
+        <h2>Coming Soon</h2>
+        <p>More games are on the way. Check back soon!</p>
+        <div class="card-tags">
+          <span class="tag">?????</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <strong>Il Barto Gaming</strong><br><br>
+  Free browser mini games — play anywhere, anytime.<br>
+  <br>
+  &copy; 2026 Il Barto Gaming. All rights reserved.
+</footer>
+
+</body>
+</html>

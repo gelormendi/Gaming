@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deep Mining — Free Browser Game | Il Barto Gaming</title>
+  <meta name="description" content="Play Deep Mining for free in your browser. Dig underground, collect rare minerals, manage your inventory, and upgrade your gear. No download required.">
+  <meta name="keywords" content="deep mining game, browser mining game, free html5 game, idle mining, pixel game">
+  <meta property="og:title" content="Deep Mining — Il Barto Gaming">
+  <meta property="og:description" content="Dig deep, collect rare minerals and upgrade your gear. Free browser game, no download needed.">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://ilbartogaming.com/deep-mining.html">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;800&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --yellow: #FFE135;
+      --orange: #FF7043;
+      --purple: #7B2FBE;
+      --pink: #FF4081;
+      --teal: #00BCD4;
+      --bg: #FFF8E7;
+      --text: #2D2D2D;
+      --text-light: #555;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--purple);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 0 #5a1a9a;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+    .logo-icon { width: 80px; height: 80px; flex-shrink: 0; object-fit: contain; }
+    .logo-text {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.6rem;
+      color: var(--yellow);
+      text-shadow: 3px 3px 0 #5a1a9a;
+    }
+    .logo-text span { color: #fff; }
+
+    nav a {
+      color: #e8d4ff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-left: 20px;
+    }
+    nav a:hover { color: var(--yellow); }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb {
+      max-width: 1100px;
+      margin: 20px auto 0;
+      padding: 0 24px;
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
+    .breadcrumb a { color: var(--purple); text-decoration: none; font-weight: 600; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb span { margin: 0 6px; }
+
+    /* ── LAYOUT ── */
+    .page {
+      max-width: 1100px;
+      margin: 24px auto 60px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    /* ── GAME FRAME ── */
+    .game-wrap {
+      background: #0b0a12;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 0 #5a1a9a, 0 0 0 3px var(--purple);
+    }
+
+    .game-frame {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: none;
+      display: block;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar h1 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 2rem;
+      color: var(--purple);
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .meta-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .tag {
+      background: #f3e8ff;
+      color: var(--purple);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .tag.new { background: var(--yellow); color: #333; }
+
+    .play-full-btn {
+      display: block;
+      text-align: center;
+      background: var(--purple);
+      color: #fff;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.1rem;
+      padding: 12px 24px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 5px 0 #5a1a9a;
+      margin-bottom: 24px;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .play-full-btn:hover { transform: translateY(-2px); box-shadow: 0 7px 0 #5a1a9a; }
+
+    /* ── INFO CARDS ── */
+    .info-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      border: 2px solid #eee;
+      box-shadow: 0 3px 0 #eee;
+    }
+
+    .info-card h3 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.1rem;
+      color: var(--purple);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-card p, .info-card li {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    .info-card ul, .info-card ol {
+      padding-left: 18px;
+    }
+    .info-card li { margin-bottom: 4px; }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 6px 12px;
+      font-size: 0.88rem;
+      color: var(--text-light);
+    }
+    .key {
+      background: #f3e8ff;
+      color: var(--purple);
+      font-weight: 800;
+      font-size: 0.78rem;
+      padding: 2px 8px;
+      border-radius: 6px;
+      text-align: center;
+      border-bottom: 2px solid #c9a0f0;
+      white-space: nowrap;
+    }
+
+    /* ── DESCRIPTION SECTION ── */
+    .description {
+      grid-column: 1 / -1;
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      border: 2px solid #eee;
+      box-shadow: 0 4px 0 #eee;
+    }
+
+    .description h2 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.5rem;
+      color: var(--purple);
+      margin-bottom: 14px;
+    }
+
+    .description p {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+
+    .description h3 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.1rem;
+      color: var(--purple);
+      margin: 20px 0 8px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--purple);
+      color: #d8b8ff;
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 0.85rem;
+    }
+    footer strong { color: #fff; font-family: 'Fredoka One', cursive; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 780px) {
+      .page { grid-template-columns: 1fr; }
+      header { padding: 12px 16px; }
+      .logo-text { font-size: 1.3rem; }
+      nav { display: none; }
+      .description { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a class="logo" href="index.html">
+    <img class="logo-icon" src="logo.png" alt="Il Barto Gaming logo">
+    <div class="logo-text">il barto <span>gaming</span></div>
+  </a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="deep-mining.html">Games</a>
+  </nav>
+</header>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <a href="index.html">Home</a>
+  <span>›</span>
+  Deep Mining
+</div>
+
+<!-- MAIN -->
+<div class="page">
+
+  <!-- Game iframe -->
+  <div>
+    <div class="game-wrap">
+      <iframe
+        class="game-frame"
+        src="deep-mining-game.html"
+        title="Deep Mining — play free in your browser"
+        allowfullscreen
+        scrolling="no">
+      </iframe>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1>Deep Mining ⛏️</h1>
+
+    <div class="meta-tags">
+      <span class="tag new">New</span>
+      <span class="tag">Idle</span>
+      <span class="tag">Strategy</span>
+      <span class="tag">Pixel Art</span>
+      <span class="tag">Free</span>
+    </div>
+
+    <a class="play-full-btn" href="deep-mining-game.html" target="_blank">⛏️ Open Full Screen</a>
+
+    <!-- Controls -->
+    <div class="info-card">
+      <h3>🕹️ Controls</h3>
+      <div class="controls-grid">
+        <span class="key">↑ ↓ ← →</span><span>Move your miner</span>
+        <span class="key">W A S D</span><span>Move (alternative)</span>
+        <span class="key">B</span><span>Buy upgrades</span>
+        <span class="key">Touch</span><span>D-pad on mobile</span>
+      </div>
+    </div>
+
+    <!-- Tips -->
+    <div class="info-card">
+      <h3>💡 Tips</h3>
+      <ol>
+        <li>Dig sideways before going deeper — you'll find more minerals.</li>
+        <li>Sell your inventory before it fills up to keep earning gold.</li>
+        <li>Upgrade your pickaxe early; harder rock layers require it.</li>
+        <li>Watch for rare gem deposits — they're worth the detour.</li>
+      </ol>
+    </div>
+
+  </aside>
+
+  <!-- Full description for SEO -->
+  <div class="description">
+    <h2>About Deep Mining</h2>
+    <p>
+      Deep Mining is a free browser-based idle strategy game where you take control of a lone miner on a quest to dig as far underground as possible. Armed with a pickaxe and an empty inventory, you navigate through layers of earth, rock, and stone — each hiding minerals, gems, and rare resources waiting to be discovered.
+    </p>
+    <p>
+      The game starts simple: move around, hit rocks, and collect whatever they drop. But as you descend, the terrain gets harder and the rewards get richer. Coal gives way to iron, iron to gold, and gold to exotic minerals that will fill your pockets with serious wealth.
+    </p>
+
+    <h3>Upgrade Your Way Down</h3>
+    <p>
+      Every mineral you collect can be sold for gold, which you reinvest into better pickaxes, larger inventory bags, and other upgrades. The progression loop is satisfying and addictive — the moment you can afford a new tier of equipment, deeper layers that felt impossible become reachable.
+    </p>
+
+    <h3>Manage Your Inventory</h3>
+    <p>
+      Your inventory fills up fast. Learning when to head back to the surface to sell — versus pushing for that one more vein of gems — is the core strategic tension of Deep Mining. Push too far and you'll miss out on valuable loot you can't carry. Play it too safe and you'll leave rare minerals behind.
+    </p>
+
+    <h3>No Download, Play Instantly</h3>
+    <p>
+      Deep Mining runs entirely in your browser. There's nothing to install, no account required, and no paywalls. Just open the page and start digging. It works on desktop and mobile browsers.
+    </p>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>Il Barto Gaming</strong><br><br>
+  Free browser mini games — play anywhere, anytime.<br><br>
+  &copy; 2026 Il Barto Gaming. All rights reserved.
+</footer>
+
+</body>
+</html>
