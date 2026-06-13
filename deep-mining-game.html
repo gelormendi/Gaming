@@ -384,12 +384,12 @@ function onBreak(x,y,L){sfxBreak();blocksMined++;spawnDebris(x,y,L);
  else if(r<0.12*lm)giveItem(L.com,x,y,1);
  else if(r<0.195*lm)giveItem(L.jnk,x,y,0);
  else if(r<0.22*lm)giveItem(L.fos,x,y,2);
- else{const cash=Math.max(1,Math.round((L.abyss?1e7:L.hp/100)*WX().money));money+=cash;uiDirty=true;
-  floaters.push({x:(x+0.5)*TILE,y:y*TILE+8,t:0,txt:'+$'+fmt(cash),col:'#8d80b8',big:false});}
+ else{const cash=(L.abyss?1e9:L.hp/10)*WX().money;money+=cash;uiDirty=true;
+  floaters.push({x:(x+0.5)*TILE,y:y*TILE+8,t:0,txt:'+$'+fmt(cash),col:'#ffd54f',big:false});}
  uiDirty=true;}
 function giveItem(name,x,y,rare){const v=ITEMS[name]||10;
- inv.set(name,(inv.get(name)||0)+1);invValue+=v;
- floaters.push({x:(x+0.5)*TILE,y:y*TILE+8,t:0,txt:'◆ '+name,col:ICOL[name]||'#fff',big:rare>=2});
+ inv.set(name,(inv.get(name)||0)+1);invValue+=v;money+=v;
+ floaters.push({x:(x+0.5)*TILE,y:y*TILE+8,t:0,txt:'◆ '+name+' +$'+fmt(v),col:ICOL[name]||'#fff',big:rare>=2});
  glows.push({x:(x+0.5)*TILE,y:(y+0.5)*TILE,t:0,col:ICOL[name]||'#fff'});
  sfxItem(rare);uiDirty=true;invDirty=true;}
 function artifactFound(){const tot=AW.reduce((s,a)=>s+a[1],0);
