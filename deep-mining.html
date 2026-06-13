@@ -227,6 +227,51 @@
       margin: 20px 0 8px;
     }
 
+    /* ── AD PLACEHOLDERS ── */
+    .ad-slot {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: repeating-linear-gradient(
+        45deg,
+        #f9f0ff,
+        #f9f0ff 10px,
+        #f3e8ff 10px,
+        #f3e8ff 20px
+      );
+      border: 2px dashed #c9a0f0;
+      border-radius: 10px;
+      color: #9b6dd6;
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+    .ad-slot span { opacity: 0.7; }
+
+    /* Leaderboard: 728×90 */
+    .ad-leaderboard {
+      width: 100%;
+      max-width: 728px;
+      height: 90px;
+      margin: 0 auto 24px;
+    }
+
+    /* Sidebar rectangle: 300×250 */
+    .ad-sidebar {
+      width: 100%;
+      height: 250px;
+      margin-bottom: 16px;
+    }
+
+    /* Below-game banner */
+    .ad-below-game {
+      width: 100%;
+      height: 90px;
+      margin-top: 16px;
+    }
+
     /* ── FOOTER ── */
     footer {
       background: var(--purple);
@@ -260,6 +305,11 @@
     <a href="deep-mining.html">Games</a>
   </nav>
 </header>
+
+<!-- AD SLOT 1: Leaderboard (728×90) — below header, above content -->
+<div style="padding: 12px 24px; max-width:1100px; margin:0 auto;">
+  <div class="ad-slot ad-leaderboard"><span>📢 Ads Here — 728×90 Leaderboard</span></div>
+</div>
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb">
@@ -298,6 +348,9 @@
 
     <a class="play-full-btn" href="deep-mining-game.html" target="_blank">⛏️ Open Full Screen</a>
 
+    <!-- AD SLOT 2: Rectangle (300×250) — top of sidebar, beside game -->
+    <div class="ad-slot ad-sidebar"><span>📢 Ads Here — 300×250 Rectangle</span></div>
+
     <!-- Controls -->
     <div class="info-card">
       <h3>🕹️ Controls</h3>
@@ -321,6 +374,11 @@
     </div>
 
   </aside>
+
+  <!-- AD SLOT 3: Below game banner (728×90) — player sees this after playing -->
+  <div style="grid-column: 1 / -1;">
+    <div class="ad-slot ad-below-game"><span>📢 Ads Here — 728×90 Below Game</span></div>
+  </div>
 
   <!-- Full description for SEO -->
   <div class="description">

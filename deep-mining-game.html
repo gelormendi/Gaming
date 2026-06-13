@@ -23,11 +23,22 @@ canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
 #invList{flex:1;overflow-y:auto;margin-top:6px}
 #invList::-webkit-scrollbar{width:6px}
 #invList::-webkit-scrollbar-thumb{background:#322a4d;border-radius:3px}
-.it{display:flex;align-items:center;gap:6px;font-size:12px;padding:2px 0}
+.it{display:flex;align-items:center;gap:6px;font-size:12px;padding:3px 2px;border-radius:3px}
 .dot{width:10px;height:10px;flex:none;border-radius:2px;box-shadow:0 0 4px rgba(255,255,255,.25)}
 .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ct{color:#9b8fc4}
-.vl{color:#ffd54f}
+.vl{color:#ffd54f;min-width:36px;text-align:right}
+.sellItemBtn{padding:2px 6px;font-family:inherit;font-size:10px;font-weight:bold;color:#1a1408;background:#ffd54f;border:1px solid #b8932a;border-radius:4px;cursor:pointer;white-space:nowrap;flex:none}
+.sellItemBtn:active{background:#ffe082}
+.craftRow{margin-top:8px}
+.craftRow:first-of-type{margin-top:6px}
+.craftHead{display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.craftReq{font-size:10px;color:#9b8fc4;margin-top:2px}
+.craftBtn{padding:4px 8px;font-family:inherit;font-weight:bold;font-size:11px;color:#1a1408;background:#80cbc4;border:2px solid #4db6ac;border-radius:5px;cursor:pointer}
+.craftBtn:disabled{background:#494261;color:#8d80b8;border-color:#322a4d;cursor:not-allowed}
+#invActions{display:flex;gap:4px;margin:6px 0 2px}
+.invActBtn{flex:1;padding:5px 4px;font-family:inherit;font-weight:bold;font-size:10px;color:#1a1408;background:#ffd54f;border:2px solid #b8932a;border-radius:5px;cursor:pointer}
+.invActBtn:disabled{background:#494261;color:#8d80b8;border-color:#322a4d;cursor:not-allowed}
 #invTotal{border-top:1px solid #322a4d;padding-top:6px;margin-top:6px;font-size:13px;color:#ffd54f;font-weight:bold}
 .hint{font-size:10px;color:#6c6191;text-align:center}
 #setPanel summary{cursor:pointer;outline:none}
@@ -129,11 +140,28 @@ canvas{touch-action:none}
       </div>
       <div class="sub" id="tpInfo"></div>
     </div>
-    <div class="panel">
-      <div class="lbl">CAJAS (superficie)</div>
-      <div class="row"><span style="color:#80deea">⛏ Minerales</span><span id="bMin">0/60</span></div>
-      <div class="row"><span style="color:#e8dcc0">🦴 Fósiles</span><span id="bFos">0/25</span></div>
-      <div class="row"><span style="color:#9e9e9e">⚙ Chatarra</span><span id="bCha">0/40</span></div>
+    <div class="panel" id="craftPanel">
+      <div class="lbl">CRAFTEO</div>
+      <div class="craftRow">
+        <div class="craftHead"><span>🔦 Antorcha</span><button class="craftBtn" id="craftTorch" disabled>Craftear</button></div>
+        <div class="craftReq" id="crReq0">2× Lata · 1× Carbón</div>
+      </div>
+      <div class="craftRow">
+        <div class="craftHead"><span>🔩 Taladro pequeño</span><button class="craftBtn" id="craftDrill" disabled>Craftear</button></div>
+        <div class="craftReq" id="crReq1">1× Hierro · 2× Engranaje roto</div>
+        <div class="hint" style="margin-top:3px">Usar: [F] o botón · perfora 3 bloques</div>
+      </div>
+      <div style="display:flex;gap:4px;margin-top:8px">
+        <button class="craftBtn" id="drillBtn" style="flex:1;background:#546e7a;border-color:#37474f;color:#eceff1" disabled>🔩 Usar taladro [F]</button>
+      </div>
+    </div>
+    <div class="panel inv">
+      <div class="lbl">INVENTARIO</div>
+      <div id="invActions">
+        <button class="invActBtn" id="sellAllBtn">💰 Vender todo</button>
+      </div>
+      <div id="invList"></div>
+      <div id="invTotal">Valor: $0</div>
     </div>
     <details class="panel" id="setPanel">
       <summary class="lbl">⚙ AJUSTES</summary>
@@ -149,12 +177,7 @@ canvas{touch-action:none}
         </select>
       </div>
     </details>
-    <div class="panel inv">
-      <div class="lbl">INVENTARIO</div>
-      <div id="invList"></div>
-      <div id="invTotal">Valor total: $0</div>
-    </div>
-    <div class="hint">WASD/Flechas excavar · E mejorar pico · <span id="reset" style="color:#b388ff;cursor:pointer;text-decoration:underline">reiniciar</span></div>
+    <div class="hint">WASD/Flechas excavar · E mejorar · F taladro · <span id="reset" style="color:#b388ff;cursor:pointer;text-decoration:underline">reiniciar</span></div>
   </div>
 </div>
 <script>
@@ -187,7 +210,8 @@ const LAYERS=[
  {n:'Núcleo interno',hp:1e12,c1:'#4d0e35',c2:'#3a0a28',sp:'#611345',ac:'#e040fb',com:'Esencia primigenia',rar:'Corazón estelar',jnk:'Tecnología alienígena',fos:'Leviatán petrificado'},
  {n:'A B I S M O',hp:1e15,abyss:true,c1:'#170024',c2:'#0d0015',sp:'#23063a',ac:'#b388ff',com:'Cristal Void',rar:'Mythrite',jnk:'Artefacto alienígena',fos:'Fósil del Vacío'},
 ];
-const ITEMS={'Lata':1,'Tornillo viejo':4,'Carbón':6,'Cobre':18,'Hierro':60,'Engranaje roto':45,
+const ITEMS={'Antorcha':80,'Taladro pequeño':800,
+ 'Lata':1,'Tornillo viejo':4,'Carbón':6,'Cobre':18,'Hierro':60,'Engranaje roto':45,
  'Plata':220,'Oro':750,'Moneda antigua':400,'Esmeralda':2000,'Diamante':8000,'Placa de metal':4500,
  'Rubí':35000,'Obsidiana':60000,'Reliquia enterrada':15000,'Topacio ígneo':125000,
  'Cristal de magma':200000,'Ópalo de fuego':400000,'Reliquia volcánica':100000,
@@ -198,7 +222,8 @@ const ITEMS={'Lata':1,'Tornillo viejo':4,'Carbón':6,'Cobre':18,'Hierro':60,'Eng
  'Amonite':5000,'Insecto en ámbar':18000,'Hueso de dinosaurio':80000,'Cráneo de raptor':150000,
  'Huevo de dinosaurio':350000,'Megalodón fósil':1e6,'Fósil imposible':1.2e7,
  'Criatura del manto':1.2e10,'Leviatán petrificado':6e12,'Fósil del Vacío':1.5e16};
-const ICOL={'Lata':'#aab2b8','Tornillo viejo':'#8d8d8d','Carbón':'#3a3a3a','Cobre':'#ff8a50',
+const ICOL={'Antorcha':'#ffb74d','Taladro pequeño':'#b0bec5',
+ 'Lata':'#aab2b8','Tornillo viejo':'#8d8d8d','Carbón':'#3a3a3a','Cobre':'#ff8a50',
  'Hierro':'#c9c9c9','Engranaje roto':'#9e9e7e','Plata':'#e8e8f0','Oro':'#ffd54f','Moneda antigua':'#d4af37',
  'Esmeralda':'#4caf50','Diamante':'#80deea','Placa de metal':'#90a4ae','Rubí':'#ef5350','Obsidiana':'#5e35b1',
  'Reliquia enterrada':'#a1887f','Topacio ígneo':'#ffa726','Cristal de magma':'#ff5722','Ópalo de fuego':'#ff9e80',
@@ -262,23 +287,16 @@ let uiDirty=true, invDirty=true, running=false, perf=0;
 function recalc(){pickDmg=Math.pow(1.3,lvl-1)*mult;cost=50*Math.pow(1.5,lvl-1);}
 // Ascensor
 let tpUnlocked=!!(SV&&SV.tpu), deepX=SV&&SV.dx!==undefined?SV.dx:(W>>1), deepY=SV&&SV.dy!==undefined?SV.dy:-1;
-// Cajas de depósito (superficie)
-const CAT={};LAYERS.forEach(L=>{CAT[L.com]='min';CAT[L.rar]='min';CAT[L.jnk]='cha';CAT[L.fos]='fos';});
-const BOXES=[
- {id:'min',n:'Minerales',x:(W>>1)-3,cap:60,fill:0,anim:0,col:'#80deea'},
- {id:'fos',n:'Fósiles',x:(W>>1)-5,cap:25,fill:0,anim:0,col:'#e8dcc0'},
- {id:'cha',n:'Chatarra',x:(W>>1)-7,cap:40,fill:0,anim:0,col:'#9e9e9e'}];
-if(SV&&SV.boxes)BOXES.forEach((b,i)=>b.fill=SV.boxes[i]||0);
-
 const player={gx:SV?SV.gx:W>>1,gy:SV?SV.gy:-1,px:0,py:0,mv:null,face:1,mining:null,mineX:0,mineY:0,hitT:0,swing:0};
 player.px=player.gx*TILE;player.py=player.gy*TILE;
 function saveGame(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({seed:SEED,money,invValue,lvl,mult,record,blocksMined,
  gx:player.gx,gy:player.gy,inv:[...inv],dug:[...dug],dmg:[...damaged],
- tpu:tpUnlocked?1:0,dx:deepX,dy:deepY,boxes:BOXES.map(b=>b.fill),
+ tpu:tpUnlocked?1:0,dx:deepX,dy:deepY,
  set:{p:settings.sndPick?1:0,l:settings.sndLoot?1:0,r:settings.regenMin}}));}catch(e){}}
 setInterval(()=>{if(running)saveGame();},5000);
-addEventListener('beforeunload',saveGame);
-document.addEventListener('visibilitychange',()=>{if(document.hidden)saveGame();});
+let resetting=false;
+addEventListener('beforeunload',()=>{if(!resetting)saveGame();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&!resetting)saveGame();});
 
 // ================= INPUT =================
 const keys={}, dirStack=[];
@@ -286,7 +304,8 @@ const KMAP={ArrowUp:'up',KeyW:'up',ArrowDown:'down',KeyS:'down',ArrowLeft:'left'
 addEventListener('keydown',e=>{const d=KMAP[e.code];
  if(d){e.preventDefault();if(!keys[d]){keys[d]=true;dirStack.push(d);}}
  if(e.code==='KeyE')buy();
- if(e.code==='KeyT')tpToggle();});
+ if(e.code==='KeyT')tpToggle();
+ if(e.code==='KeyF')useDrill();});
 addEventListener('keyup',e=>{const d=KMAP[e.code];
  if(d){keys[d]=false;const i=dirStack.indexOf(d);if(i>=0)dirStack.splice(i,1);}});
 function curDir(){const V={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
@@ -347,6 +366,9 @@ function mineTick(x,y,dt){const k=x+','+y;
  player.hitT+=dt;
  while(player.hitT>=HIT_INT){player.hitT-=HIT_INT;hitBlock(x,y);}}
 function hitBlock(x,y){const L=layerOfRow(y),k=x+','+y;
+ if(layerIdxOfRow(y)>=4&&!(inv.get('Antorcha')||0)){
+  if(!hitBlock.tc||perf-hitBlock.tc>3){toast('🔦 Necesitás una Antorcha para avanzar más profundo');hitBlock.tc=perf;}
+  return;}
  let hp=damaged.has(k)?damaged.get(k):L.hp;
  hp-=pickDmg*WX().dmg;player.swing=0.16;sfxHit();spawnSparks(x,y);
  if(hp<=0){damaged.delete(k);dug.add(k);player.mining=null;onBreak(x,y,L);}
@@ -362,12 +384,12 @@ function onBreak(x,y,L){sfxBreak();blocksMined++;spawnDebris(x,y,L);
  else if(r<0.12*lm)giveItem(L.com,x,y,1);
  else if(r<0.195*lm)giveItem(L.jnk,x,y,0);
  else if(r<0.22*lm)giveItem(L.fos,x,y,2);
- else{const cash=(L.abyss?1e9:L.hp/10)*WX().money;money+=cash;
-  floaters.push({x:(x+0.5)*TILE,y:y*TILE+8,t:0,txt:'+$'+fmt(cash),col:'#ffd54f',big:false});}
+ else{const cash=Math.max(1,Math.round((L.abyss?1e7:L.hp/100)*WX().money));money+=cash;uiDirty=true;
+  floaters.push({x:(x+0.5)*TILE,y:y*TILE+8,t:0,txt:'+$'+fmt(cash),col:'#8d80b8',big:false});}
  uiDirty=true;}
 function giveItem(name,x,y,rare){const v=ITEMS[name]||10;
- inv.set(name,(inv.get(name)||0)+1);invValue+=v;money+=v;
- floaters.push({x:(x+0.5)*TILE,y:y*TILE+8,t:0,txt:'◆ '+name+' +$'+fmt(v),col:ICOL[name]||'#fff',big:rare>=2});
+ inv.set(name,(inv.get(name)||0)+1);invValue+=v;
+ floaters.push({x:(x+0.5)*TILE,y:y*TILE+8,t:0,txt:'◆ '+name,col:ICOL[name]||'#fff',big:rare>=2});
  glows.push({x:(x+0.5)*TILE,y:(y+0.5)*TILE,t:0,col:ICOL[name]||'#fff'});
  sfxItem(rare);uiDirty=true;invDirty=true;}
 function artifactFound(){const tot=AW.reduce((s,a)=>s+a[1],0);
@@ -375,6 +397,62 @@ function artifactFound(){const tot=AW.reduce((s,a)=>s+a[1],0);
  for(const a of AW){if(r<a[1]){m=a[0];break;}r-=a[1];}
  mult*=m;recalc();sfxArtifact();
  toast('🜲 ¡ARTEFACTO EXPONENTE! Poder ×'+m);uiDirty=true;}
+// ================= CRAFTEO =================
+const RECIPES={
+ 'Antorcha':{req:{'Lata':2,'Carbón':1}},
+ 'Taladro pequeño':{req:{'Hierro':1,'Engranaje roto':2}}};
+function canCraft(name){for(const[item,n]of Object.entries(RECIPES[name].req))if((inv.get(item)||0)<n)return false;return true;}
+function craft(name){if(!canCraft(name))return;
+ for(const[item,n]of Object.entries(RECIPES[name].req)){
+  invValue-=(ITEMS[item]||0)*n;
+  const c=(inv.get(item)||0)-n;if(c<=0)inv.delete(item);else inv.set(item,c);}
+ inv.set(name,(inv.get(name)||0)+1);invValue+=(ITEMS[name]||0);
+ sfxItem(1);toast('⚒ ¡'+name+' crafteada!');uiDirty=true;invDirty=true;}
+
+// ================= TALADRO =================
+let drillAnim=0;
+function sfxDrill(){if(!actx)return;
+ tone(1200,0.06,'sawtooth',0.22,600);
+ setTimeout(()=>tone(900,0.06,'sawtooth',0.22,450),65);
+ setTimeout(()=>tone(600,0.1,'sawtooth',0.18,300),130);
+ noiseSfx(0.3,900,0.28,'bandpass');}
+function useDrill(){if(!running||(inv.get('Taladro pequeño')||0)<1)return;
+ const d=curDir()||[player.face,0];
+ const dx=d[0],dy=d[1];if(dx===0&&dy===0)return;
+ let broke=0;
+ for(let i=1;i<=3;i++){
+  const tx=player.gx+dx*i,ty=player.gy+dy*i;
+  if(tx<0||tx>=W||ty<0||!isSolid(tx,ty))continue;
+  const L=layerOfRow(ty);
+  sfxBreak();blocksMined++;spawnDebris(tx,ty,L);
+  dug.add(tx+','+ty);damaged.delete(tx+','+ty);
+  const r=Math.random(),lm=WX().loot;
+  if(r<0.02*lm)giveItem(L.rar,tx,ty,2);
+  else if(r<0.12*lm)giveItem(L.com,tx,ty,1);
+  else if(r<0.195*lm)giveItem(L.jnk,tx,ty,0);
+  else if(r<0.22*lm)giveItem(L.fos,tx,ty,2);
+  else{const cash=Math.max(1,Math.round((L.abyss?1e7:L.hp/100)*WX().money));money+=cash;}
+  for(let p=0;p<12;p++)parts.push({x:(tx+0.5)*TILE,y:(ty+0.5)*TILE,
+   vx:dx*200+(Math.random()-0.5)*80,vy:dy*200+(Math.random()-0.5)*80,
+   t:0,life:0.45,col:i===1?'#90caf9':i===2?'#64b5f6':'#42a5f5',s:4});
+  broke++;}
+ if(broke>0){
+  const c=(inv.get('Taladro pequeño')||0)-1;
+  if(c<=0)inv.delete('Taladro pequeño');else inv.set('Taladro pequeño',c);
+  drillAnim=0.5;sfxDrill();
+  toast('🔩 Taladro: '+broke+' bloques · '+(c>0?c+' usos restantes':'¡Taladro roto!'));
+  invDirty=true;uiDirty=true;}}
+
+function sellItem(name){const c=inv.get(name)||0;if(!c)return;
+ const v=(ITEMS[name]||0)*c;money+=v;invValue-=v;inv.delete(name);
+ sfxItem(1);toast('💰 Vendiste '+name+' ×'+c+' → +$'+fmt(v));
+ uiDirty=true;invDirty=true;}
+function sellAll(){let total=0;
+ for(const[name,c]of inv)total+=(ITEMS[name]||0)*c;
+ if(!total)return;
+ inv.clear();money+=total;invValue=0;
+ sfxItem(2);toast('💰 Vendiste todo → +$'+fmt(total));
+ uiDirty=true;invDirty=true;}
 function buy(){if(!running)return;
  if(money>=cost){money-=cost;lvl++;recalc();sfxBuy();uiDirty=true;}}
 // ===== Ascensor =====
@@ -392,23 +470,6 @@ function teleport(tx,ty){if(!tpUnlocked||!running)return;
 function tpToggle(){if(!tpUnlocked)return;
  if(player.gy<2){if(deepY>0)teleport(deepX,deepY);}
  else teleport(W>>1,-1);}
-// ===== Cajas =====
-function depositBox(b){let n=0;
- for(const [name,c] of [...inv]){
-  if(CAT[name]===b.id&&c>0){n+=c;inv.delete(name);}}
- if(!n)return;
- b.fill+=n;b.anim=0.6;invDirty=true;uiDirty=true;
- floaters.push({x:(b.x+0.5)*TILE,y:-34,t:0,txt:'📦 +'+n,col:b.col,big:false});
- if(settings.sndLoot){tone(392,0.1,'sine',0.12);setTimeout(()=>tone(523,0.12,'sine',0.12),90);}
- while(b.fill>=b.cap){b.fill-=b.cap;freeLevel(b);}}
-function freeLevel(b){lvl++;recalc();b.anim=1.4;
- glows.push({x:(b.x+0.5)*TILE,y:-16,t:0});
- glows.push({x:(b.x+0.5)*TILE,y:-30,t:-0.15});
- for(let i=0;i<12;i++)parts.push({x:(b.x+0.5)*TILE+(Math.random()-0.5)*26,y:-20,
-  vx:(Math.random()-0.5)*150,vy:-80-Math.random()*150,t:0,life:0.8,col:b.col,s:3});
- toast('📦 ¡Caja de '+b.n+' llena! +1 nivel de pico GRATIS');
- sfxLayer();uiDirty=true;}
-
 function update(dt){
  player.swing=Math.max(0,player.swing-dt);
  if(player.mv){const m=player.mv;m.p+=dt*m.sp;
@@ -428,9 +489,6 @@ function update(dt){
  }
  depth=player.gy<0?0:rowDepth(player.gy+1);
  if(depth>record){record=depth;deepX=player.gx;deepY=player.gy;}
- // depósito en cajas (en superficie, al lado de cada caja)
- if(player.gy===-1&&!player.mv){
-  for(const b of BOXES)if(Math.abs(player.gx-b.x)<=1)depositBox(b);}
  curLi=layerIdxOfRow(Math.max(0,player.gy));
  if(curLi!==prevLi){if(running&&perf>1)showBanner(LAYERS[curLi]);prevLi=curLi;}
  if(ambGain){const target=curLi>0?Math.min(0.25,0.04+curLi/14*0.22):0;
@@ -494,7 +552,7 @@ function updFx(dt){
  for(let i=floaters.length-1;i>=0;i--){const f=floaters[i];f.t+=dt;f.y-=32*dt;
   if(f.t>1.5)floaters.splice(i,1);}
  for(let i=glows.length-1;i>=0;i--){glows[i].t+=dt;if(glows[i].t>0.7)glows.splice(i,1);}
- for(const b of BOXES)b.anim=Math.max(0,b.anim-dt);}
+ drillAnim=Math.max(0,drillAnim-dt);}
 
 // ================= TILES (pixel art procedural) =================
 const crackTiles=[];
@@ -565,7 +623,6 @@ function render(){const cw=VW,ch=VH;
     ctx.fillStyle='#56c456';ctx.fillRect(sx,sy,TILE,3);}
    if(damaged.has(k)){const st=Math.min(2,((1-damaged.get(k)/L.hp)*3)|0);
     ctx.drawImage(crackTiles[st],sx,sy);}}}
- drawBoxes();
  // objetivo de minado
  if(player.mining){const sx=player.mineX*TILE-camX,sy=player.mineY*TILE-camY;
   ctx.strokeStyle='rgba(255,255,255,'+(0.35+0.3*Math.sin(perf*14))+')';
@@ -598,23 +655,6 @@ function render(){const cw=VW,ch=VH;
   ctx.fillStyle=f.col;ctx.fillText(f.txt,f.x-camX,f.y-camY);}
  ctx.globalAlpha=1;ctx.textAlign='left';}
 
-function drawBoxes(){
- for(const b of BOXES){
-  const px=(b.x+0.5)*TILE-camX,py=-camY;
-  if(px<-60||px>VW+60||py<-10)continue;
-  const s=1+(b.anim>0?Math.sin(b.anim*14)*0.1*Math.min(1,b.anim):0);
-  ctx.save();ctx.translate(px,py);ctx.scale(s,s);
-  ctx.fillStyle='#7a5230';ctx.fillRect(-13,-20,26,20);
-  ctx.fillStyle='#5d3f24';ctx.fillRect(-13,-20,26,3);ctx.fillRect(-13,-3,26,3);
-  ctx.strokeStyle='#3e2a16';ctx.lineWidth=1.5;ctx.strokeRect(-13,-20,26,20);
-  ctx.fillStyle=b.col;ctx.fillRect(-9,-15,5,5);
-  const fr=Math.min(1,b.fill/b.cap);
-  ctx.fillStyle='rgba(0,0,0,.45)';ctx.fillRect(8,-17,4,14);
-  ctx.fillStyle=b.col;ctx.fillRect(8,-17+14*(1-fr),4,14*fr);
-  if(b.anim>0.6){ctx.globalAlpha=(b.anim-0.6)/0.8;
-   ctx.fillStyle='#fff8d0';ctx.font='bold 11px "Courier New",monospace';
-   ctx.textAlign='center';ctx.fillText('★',0,-26);ctx.globalAlpha=1;ctx.textAlign='left';}
-  ctx.restore();}}
 function drawPlayer(){const sx=player.px-camX+16,sy=player.py-camY+16;
  ctx.save();ctx.translate(sx,sy);
  if(player.face<0)ctx.scale(-1,1);
@@ -628,11 +668,20 @@ function drawPlayer(){const sx=player.px-camX+16,sy=player.py-camY+16;
  ctx.fillStyle='#3e2723';ctx.fillRect(1,-7,2,2);
  ctx.fillStyle='#fdd835';ctx.fillRect(-6,-14,12,5);ctx.fillRect(-7,-10,2,3);
  ctx.fillStyle='#ffffff';ctx.fillRect(4,-13,3,3);
- const ang=player.swing>0?(-1.7+(0.16-player.swing)/0.16*2.1):-0.5;
- ctx.save();ctx.translate(7,2);ctx.rotate(ang);
- ctx.fillStyle='#8d6e63';ctx.fillRect(-1,-15,3,15);
- ctx.fillStyle='#b0bec5';ctx.fillRect(-7,-18,14,4);
- ctx.restore();ctx.restore();}
+ if(drillAnim>0){// animación taladro: brazo extendido horizontal con taladro
+  const a=drillAnim/0.5;
+  ctx.fillStyle='#8d6e63';ctx.fillRect(6,0,14,3);
+  ctx.fillStyle='#b0bec5';ctx.fillRect(18,-2,8,7);
+  ctx.fillStyle='#546e7a';ctx.fillRect(24,-1,5,5);
+  ctx.globalAlpha=a*0.6;ctx.fillStyle='#90caf9';
+  ctx.fillRect(26,1,12,3);ctx.globalAlpha=1;}
+ else{
+  const ang=player.swing>0?(-1.7+(0.16-player.swing)/0.16*2.1):-0.5;
+  ctx.save();ctx.translate(7,2);ctx.rotate(ang);
+  ctx.fillStyle='#8d6e63';ctx.fillRect(-1,-15,3,15);
+  ctx.fillStyle='#b0bec5';ctx.fillRect(-7,-18,14,4);
+  ctx.restore();}
+ ctx.restore();}
 
 // ================= UI =================
 const elDepth=document.getElementById('depth'),elRec=document.getElementById('rec'),
@@ -662,11 +711,14 @@ const tDepth=document.getElementById('tDepth'),tMoney=document.getElementById('t
  sideEl=document.getElementById('side'),menuBtn=document.getElementById('menuBtn');
 menuBtn.addEventListener('click',()=>sideEl.classList.toggle('open'));
 buyFab.addEventListener('click',buy);
-const bMin=document.getElementById('bMin'),bFos=document.getElementById('bFos'),
- bCha=document.getElementById('bCha'),tpInfo=document.getElementById('tpInfo');
+const tpInfo=document.getElementById('tpInfo');
 document.getElementById('tpUp').addEventListener('click',()=>teleport(W>>1,-1));
 document.getElementById('tpDown').addEventListener('click',()=>{if(deepY>0)teleport(deepX,deepY);});
 if(tpUnlocked)document.getElementById('tpPanel').style.display='';
+document.getElementById('sellAllBtn').addEventListener('click',sellAll);
+document.getElementById('craftTorch').addEventListener('click',()=>craft('Antorcha'));
+document.getElementById('craftDrill').addEventListener('click',()=>craft('Taladro pequeño'));
+document.getElementById('drillBtn').addEventListener('click',useDrill);
 function uiTick(){
  elDepth.textContent=fmtDepth(depth);
  elRec.textContent='Récord: '+fmtDepth(record);
@@ -685,15 +737,22 @@ function uiTick(){
   elMul.textContent='×'+fmt(mult);
   buyBtn.textContent='MEJORAR — $'+fmt(cost)+' [E]';
   buyBtn.disabled=money<cost;
-  bMin.textContent=BOXES[0].fill+'/'+BOXES[0].cap;
-  bFos.textContent=BOXES[1].fill+'/'+BOXES[1].cap;
-  bCha.textContent=BOXES[2].fill+'/'+BOXES[2].cap;
-  tpInfo.textContent='Fondo: '+fmtDepth(record)+' · [T] alterna';}
+  tpInfo.textContent='Fondo: '+fmtDepth(record)+' · [T] alterna';
+  document.getElementById('craftTorch').disabled=!canCraft('Antorcha');
+  document.getElementById('craftDrill').disabled=!canCraft('Taladro pequeño');
+  document.getElementById('drillBtn').disabled=!(inv.get('Taladro pequeño')||0);
+  document.getElementById('crReq0').textContent=
+   '2× Lata ('+(inv.get('Lata')||0)+') · 1× Carbón ('+(inv.get('Carbón')||0)+')';
+  document.getElementById('crReq1').textContent=
+   '1× Hierro ('+(inv.get('Hierro')||0)+') · 2× Engranaje roto ('+(inv.get('Engranaje roto')||0)+')';}
  if(invDirty){invDirty=false;
   const arr=[...inv.entries()].sort((a,b)=>(ITEMS[b[0]]||0)-(ITEMS[a[0]]||0));
   invList.innerHTML=arr.map(([n,c])=>'<div class="it"><span class="dot" style="background:'+(ICOL[n]||'#fff')+
-   '"></span><span class="nm">'+n+'</span><span class="ct">×'+c+'</span><span class="vl">$'+fmt(ITEMS[n]||0)+'</span></div>').join('');
-  invTotal.textContent='Valor total: $'+fmt(invValue);}}
+   '"></span><span class="nm">'+n+'</span><span class="ct">×'+c+'</span><span class="vl">$'+fmt((ITEMS[n]||0)*c)+
+   '</span><button class="sellItemBtn" data-name="'+n+'">Vender</button></div>').join('');
+  invList.querySelectorAll('.sellItemBtn').forEach(b=>b.addEventListener('click',()=>sellItem(b.dataset.name)));
+  document.getElementById('sellAllBtn').disabled=inv.size===0;
+  invTotal.textContent='Valor: $'+fmt(invValue);}}
 
 // ================= LOOP =================
 let lastT=0;
@@ -706,7 +765,7 @@ document.getElementById('startBtn').addEventListener('click',()=>{
  audioInit();running=true;});
 document.getElementById('reset').addEventListener('click',()=>{
  if(confirm('¿Borrar todo el progreso y empezar de cero?')){
-  localStorage.removeItem(SAVE_KEY);location.reload();}});
+  resetting=true;localStorage.removeItem(SAVE_KEY);location.reload();}});
 if(SV)document.getElementById('startBtn').textContent='⛏ CONTINUAR ('+fmtDepth(SV.record||0)+')';
 // settings
 const sPick=document.getElementById('sPick'),sLoot=document.getElementById('sLoot'),
