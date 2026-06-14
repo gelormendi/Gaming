@@ -25,11 +25,14 @@ canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
 #invList::-webkit-scrollbar-thumb{background:#322a4d;border-radius:3px}
 .it{display:flex;align-items:center;gap:6px;font-size:12px;padding:3px 2px;border-radius:3px}
 .dot{width:10px;height:10px;flex:none;border-radius:2px;box-shadow:0 0 4px rgba(255,255,255,.25)}
+.ico{font-size:14px;line-height:1;flex:none;width:18px;text-align:center}
 .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ct{color:#9b8fc4}
 .vl{color:#ffd54f;min-width:36px;text-align:right}
-.sellItemBtn{padding:2px 6px;font-family:inherit;font-size:10px;font-weight:bold;color:#1a1408;background:#ffd54f;border:1px solid #b8932a;border-radius:4px;cursor:pointer;white-space:nowrap;flex:none}
-.sellItemBtn:active{background:#ffe082}
+.sellItemBtn{display:none}
+.iBtn{width:22px;height:22px;font-size:13px;border:1px solid #322a4d;border-radius:5px;background:#1d1830;cursor:pointer;flex:none;padding:0;line-height:22px;text-align:center}
+.iBtn:active{background:#2c2440}
+.iBtn.lockOn{background:#2a1b4d;border-color:#5d4b94}
 .craftRow{margin-top:8px}
 .craftRow:first-of-type{margin-top:6px}
 .craftHead{display:flex;justify-content:space-between;align-items:center;font-size:12px}
@@ -165,6 +168,7 @@ canvas{touch-action:none}
     </div>
     <details class="panel" id="setPanel">
       <summary class="lbl">⚙ SETTINGS</summary>
+      <label class="row"><span>Music</span><input type="checkbox" id="sMusic" checked></label>
       <label class="row"><span>Pickaxe/mining sound</span><input type="checkbox" id="sPick" checked></label>
       <label class="row"><span>Loot sound</span><input type="checkbox" id="sLoot" checked></label>
       <div class="row"><span>Regenerate terrain</span>
@@ -234,6 +238,20 @@ const ICOL={'Torch':'#ffb74d','Small Drill':'#b0bec5',
  'Fossil Fish':'#d7ccb0','Ammonite':'#d9b98a','Amber Insect':'#ffc04d','Dinosaur Bone':'#f0e6cc',
  'Raptor Skull':'#f0e6cc','Dinosaur Egg':'#cfd8a8','Fossil Megalodon':'#b8c4cc',
  'Impossible Fossil':'#ffe57f','Mantle Creature':'#ff8a65','Petrified Leviathan':'#f48fb1','Void Fossil':'#d1c4e9'};
+// Item icons (emoji)
+const IICO={
+ 'Torch':'🔦','Small Drill':'🔩',
+ 'Tin Can':'🥫','Old Screw':'🪛','Coal':'🪨','Copper':'🟤',
+ 'Iron':'🔘','Broken Gear':'⚙️','Silver':'⚪','Gold':'🟡','Ancient Coin':'🪙',
+ 'Emerald':'💚','Diamond':'💎','Metal Plate':'🔧','Ruby':'❤️','Obsidian':'🟣',
+ 'Buried Relic':'🏺','Igneous Topaz':'🔶','Magma Crystal':'🌋','Fire Opal':'🔴',
+ 'Volcanic Relic':'🌊','Stellar Iron':'⭐','Core Gem':'💠','Ancient Machinery':'⚗️',
+ 'Primordial Essence':'🌀','Lost Technology':'💾','Stellar Heart':'💜','Alien Technology':'🛸',
+ 'Void Crystal':'🔮','Mythrite':'✨','Alien Artifact':'👾',
+ 'Fossil Snail':'🐌','Fossil Shell':'🐚','Fossil Fern':'🌿','Trilobite':'🦐',
+ 'Fossil Fish':'🐟','Ammonite':'🌀','Amber Insect':'🐛','Dinosaur Bone':'🦴',
+ 'Raptor Skull':'💀','Dinosaur Egg':'🥚','Fossil Megalodon':'🦈',
+ 'Impossible Fossil':'❓','Mantle Creature':'🐙','Petrified Leviathan':'🐉','Void Fossil':'👁️'};
 // Artefacto Exponente: roll de multiplicador (pesos ~ % acordados: 50,25,12.5,7.25,3,1,0.5 ... 0.09 a la 20)
 const AW=[[2,5000],[3,2500],[4,1250],[5,725],[6,150],[7,150],[8,50],[9,50],[10,50],
  [11,40],[12,35],[13,30],[14,25],[15,20],[16,17],[17,15],[18,13],[19,11],[20,9]];
@@ -269,6 +287,7 @@ function isSolid(x,y){if(y<0)return false;if(x<0||x>=W)return true;
 const settings={
  sndPick:!(SV&&SV.set&&!SV.set.p),
  sndLoot:!(SV&&SV.set&&!SV.set.l),
+ music:!(SV&&SV.set&&!SV.set.m),
  regenMin:(SV&&SV.set&&SV.set.r)||0};
 const WEATHERS=[
  {n:'Sunny',ico:'☀️',desc:'No effects',dmg:1,money:1,loot:1,fx:null,sky:['#6fb9e8','#cdeffd'],sun:1,cloud:null},
@@ -283,6 +302,7 @@ function WX(){return WEATHERS[wIdx];}
 let money=SV?SV.money||0:0, invValue=SV?SV.invValue||0:0, lvl=SV?SV.lvl||1:1, mult=SV?SV.mult||1:1, pickDmg=1, cost=50;
 let depth=0, record=SV?SV.record||0:0, blocksMined=SV?SV.blocksMined||0:0, curLi=0;
 const inv=new Map((SV&&SV.inv)||[]);
+const locked=new Set((SV&&SV.locked)||[]);
 let uiDirty=true, invDirty=true, running=false, perf=0;
 function recalc(){pickDmg=Math.pow(1.3,lvl-1)*mult;cost=50*Math.pow(1.5,lvl-1);}
 // Ascensor
@@ -291,8 +311,8 @@ const player={gx:SV?SV.gx:W>>1,gy:SV?SV.gy:-1,px:0,py:0,mv:null,face:1,mining:nu
 player.px=player.gx*TILE;player.py=player.gy*TILE;
 function saveGame(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({seed:SEED,money,invValue,lvl,mult,record,blocksMined,
  gx:player.gx,gy:player.gy,inv:[...inv],dug:[...dug],dmg:[...damaged],
- tpu:tpUnlocked?1:0,dx:deepX,dy:deepY,
- set:{p:settings.sndPick?1:0,l:settings.sndLoot?1:0,r:settings.regenMin}}));}catch(e){}}
+ tpu:tpUnlocked?1:0,dx:deepX,dy:deepY,locked:[...locked],
+ set:{p:settings.sndPick?1:0,l:settings.sndLoot?1:0,m:settings.music?1:0,r:settings.regenMin}}));}catch(e){}}
 setInterval(()=>{if(running)saveGame();},5000);
 let resetting=false;
 addEventListener('beforeunload',()=>{if(!resetting)saveGame();});
@@ -324,7 +344,38 @@ addEventListener('contextmenu',e=>{
  if(e.target.closest('#dpad,#buyFab,canvas'))e.preventDefault();});
 
 // ================= AUDIO (Web Audio API) =================
-let actx=null,master=null,ambGain=null;
+let actx=null,master=null,ambGain=null,musicGain=null;
+
+// ================= MUSIC =================
+// 90 BPM — C minor feel
+const MB=60/90; // seconds per beat
+// [freq_hz, beats]  0 = rest
+const MELO=[
+ [392,.5],[311,.5],[349,.5],[392,.5],[466,1],[392,.5],[349,.5],
+ [311,1],[261,.5],[311,.5],[349,1],[311,.5],[261,.5],[233,2],[0,1],
+ [349,.5],[311,.5],[261,.5],[311,.5],[392,1],[349,.5],[311,.5],
+ [261,1],[233,.5],[261,.5],[311,1],[261,2],[0,1]];
+const BASS=[
+ [131,2],[98,2],[117,2],[175,2],
+ [131,2],[156,2],[175,2],[131,2]];
+let mI=0,bI=0,mT=0,bT=0;
+
+function mNote(f,dur,vol,type){if(!actx||!musicGain||f===0)return;
+ const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();
+ o.type=type||'triangle';o.frequency.value=f;
+ g.gain.setValueAtTime(0,t);
+ g.gain.linearRampToValueAtTime(vol,t+0.03);
+ g.gain.exponentialRampToValueAtTime(0.001,t+Math.max(0.04,dur*0.88));
+ o.connect(g);g.connect(musicGain);o.start(t);o.stop(t+dur);}
+
+function musicTick(dt){if(!musicGain)return;
+ const on=settings.music&&running;
+ musicGain.gain.value+=((on?0.11:0)-musicGain.gain.value)*0.05;
+ if(!on)return;
+ mT-=dt;bT-=dt;
+ if(mT<=0){const[f,d]=MELO[mI%MELO.length];mT=d*MB;mNote(f,d*MB*0.85,0.22,'triangle');mI++;}
+ if(bT<=0){const[f,d]=BASS[bI%BASS.length];bT=d*MB;mNote(f,d*MB*0.75,0.28,'square');bI++;}}
+
 function audioInit(){if(actx)return;
  actx=new (window.AudioContext||window.webkitAudioContext)();
  master=actx.createGain();master.gain.value=0.5;master.connect(actx.destination);
@@ -334,6 +385,7 @@ function audioInit(){if(actx)return;
  const fl=actx.createBiquadFilter();fl.type='lowpass';fl.frequency.value=220;
  ambGain=actx.createGain();ambGain.gain.value=0;
  src.connect(fl);fl.connect(ambGain);ambGain.connect(master);src.start();
+ musicGain=actx.createGain();musicGain.gain.value=0;musicGain.connect(master);
  scheduleDrip();}
 function tone(f,dur,type,vol,slide){if(!actx)return;
  const o=actx.createOscillator(),g=actx.createGain(),t=actx.currentTime;
@@ -389,7 +441,7 @@ function onBreak(x,y,L){sfxBreak();blocksMined++;spawnDebris(x,y,L);
  uiDirty=true;}
 function giveItem(name,x,y,rare){const v=ITEMS[name]||10;
  inv.set(name,(inv.get(name)||0)+1);invValue+=v;money+=v;
- floaters.push({x:(x+0.5)*TILE,y:y*TILE+8,t:0,txt:'◆ '+name+' +$'+fmt(v),col:ICOL[name]||'#fff',big:rare>=2});
+ floaters.push({x:(x+0.5)*TILE,y:y*TILE+8,t:0,txt:(IICO[name]||'◆')+' +$'+fmt(v),col:ICOL[name]||'#fff',big:rare>=1});
  glows.push({x:(x+0.5)*TILE,y:(y+0.5)*TILE,t:0,col:ICOL[name]||'#fff'});
  sfxItem(rare);uiDirty=true;invDirty=true;}
 function artifactFound(){const tot=AW.reduce((s,a)=>s+a[1],0);
@@ -448,9 +500,10 @@ function sellItem(name){const c=inv.get(name)||0;if(!c)return;
  sfxItem(1);toast('💰 Sold '+name+' ×'+c+' → +$'+fmt(v));
  uiDirty=true;invDirty=true;}
 function sellAll(){let total=0;
- for(const[name,c]of inv)total+=(ITEMS[name]||0)*c;
+ for(const[name,c]of inv){if(locked.has(name))continue;
+  total+=(ITEMS[name]||0)*c;invValue-=(ITEMS[name]||0)*c;inv.delete(name);}
  if(!total)return;
- inv.clear();money+=total;invValue=0;
+ money+=total;
  sfxItem(2);toast('💰 Sold everything → +$'+fmt(total));
  uiDirty=true;invDirty=true;}
 function buy(){if(!running)return;
@@ -511,6 +564,12 @@ function onWeather(){const w=WX();
 function regenTerrain(){regenT=0;
  dug.clear();damaged.clear();
  player.mv=null;player.mining=null;
+ // if stuck deep without torch, rescue to surface
+ if(layerIdxOfRow(Math.max(0,player.gy))>=4&&!(inv.get('Torch')||0)){
+  player.gx=W>>1;player.gy=-1;player.px=player.gx*TILE;player.py=player.gy*TILE;
+  camX=0;camY=-260;
+  noiseSfx(0.9,150,0.3,'lowpass');
+  toast('🌍 Terrain regenerated! No torch — rescued to surface.');return;}
  player.px=player.gx*TILE;player.py=player.gy*TILE;
  for(let yy=player.gy;yy>=Math.max(0,player.gy-2);yy--)dug.add(player.gx+','+yy);
  noiseSfx(0.9,150,0.3,'lowpass');toast('🌍 Terrain regenerated!');}
@@ -550,7 +609,7 @@ function updFx(dt){
   if(p.t>p.life){parts.splice(i,1);continue;}
   p.vy+=500*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;}
  for(let i=floaters.length-1;i>=0;i--){const f=floaters[i];f.t+=dt;f.y-=32*dt;
-  if(f.t>1.5)floaters.splice(i,1);}
+  if(f.t>4.5)floaters.splice(i,1);}
  for(let i=glows.length-1;i>=0;i--){glows[i].t+=dt;if(glows[i].t>0.7)glows.splice(i,1);}
  drillAnim=Math.max(0,drillAnim-dt);}
 
@@ -648,7 +707,7 @@ function render(){const cw=VW,ch=VH;
  ctx.globalCompositeOperation='source-over';
  drawWeatherFx();
  // textos flotantes
- for(const f of floaters){const a=Math.max(0,1-f.t/1.5);
+ for(const f of floaters){const a=Math.max(0,1-f.t/4.5);
   ctx.globalAlpha=a;ctx.font=(f.big?'bold 15px':'bold 12px')+' "Courier New",monospace';
   ctx.fillStyle='#000';ctx.textAlign='center';
   ctx.fillText(f.txt,f.x-camX+1,f.y-camY+1);
@@ -747,10 +806,19 @@ function uiTick(){
    '1× Iron ('+(inv.get('Iron')||0)+') · 2× Broken Gear ('+(inv.get('Broken Gear')||0)+')';}
  if(invDirty){invDirty=false;
   const arr=[...inv.entries()].sort((a,b)=>(ITEMS[b[0]]||0)-(ITEMS[a[0]]||0));
-  invList.innerHTML=arr.map(([n,c])=>'<div class="it"><span class="dot" style="background:'+(ICOL[n]||'#fff')+
-   '"></span><span class="nm">'+n+'</span><span class="ct">×'+c+'</span><span class="vl">$'+fmt((ITEMS[n]||0)*c)+
-   '</span><button class="sellItemBtn" data-name="'+n+'">Sell</button></div>').join('');
-  invList.querySelectorAll('.sellItemBtn').forEach(b=>b.addEventListener('click',()=>sellItem(b.dataset.name)));
+  invList.innerHTML=arr.map(([n,c])=>{const lk=locked.has(n);return(
+   '<div class="it"><span class="ico">'+(IICO[n]||'◆')+'</span>'+
+   '<span class="nm">'+n+'</span><span class="ct">×'+c+'</span>'+
+   '<span class="vl">$'+fmt((ITEMS[n]||0)*c)+'</span>'+
+   '<button class="iBtn lockBtn'+(lk?' lockOn':'')+'" data-name="'+n+'" title="Lock/unlock">'+(lk?'🔒':'🔓')+'</button>'+
+   '<button class="iBtn sellBtn" data-name="'+n+'" title="Sell">💰</button>'+
+   '</div>');}).join('');
+  invList.querySelectorAll('.sellBtn').forEach(b=>b.addEventListener('click',()=>sellItem(b.dataset.name)));
+  invList.querySelectorAll('.lockBtn').forEach(b=>b.addEventListener('click',()=>{
+   const n=b.dataset.name;
+   if(locked.has(n)){locked.delete(n);b.textContent='🔓';b.classList.remove('lockOn');}
+   else{locked.add(n);b.textContent='🔒';b.classList.add('lockOn');}
+  }));
   document.getElementById('sellAllBtn').disabled=inv.size===0;
   invTotal.textContent='Valor: $'+fmt(invValue);}}
 
@@ -758,6 +826,7 @@ function uiTick(){
 let lastT=0;
 function loop(t){const dt=Math.min(0.05,(t-lastT)/1000||0);lastT=t;
  if(running){perf+=dt;update(dt);updFx(dt);updateCam(dt);render();uiTick();}
+ musicTick(dt);
  requestAnimationFrame(loop);}
 
 document.getElementById('startBtn').addEventListener('click',()=>{
@@ -770,8 +839,10 @@ if(SV)document.getElementById('startBtn').textContent='⛏ CONTINUE ('+fmtDepth(
 // settings
 const sPick=document.getElementById('sPick'),sLoot=document.getElementById('sLoot'),
  sRegen=document.getElementById('sRegen');
-sPick.checked=settings.sndPick;sLoot.checked=settings.sndLoot;
+const sMusic=document.getElementById('sMusic');
+sMusic.checked=settings.music;sPick.checked=settings.sndPick;sLoot.checked=settings.sndLoot;
 sRegen.value=String(settings.regenMin);
+sMusic.addEventListener('change',()=>{settings.music=sMusic.checked;saveGame();});
 sPick.addEventListener('change',()=>{settings.sndPick=sPick.checked;saveGame();});
 sLoot.addEventListener('change',()=>{settings.sndLoot=sLoot.checked;saveGame();});
 sRegen.addEventListener('change',()=>{settings.regenMin=+sRegen.value;regenT=0;saveGame();
