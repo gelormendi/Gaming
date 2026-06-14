@@ -448,7 +448,10 @@ function artifactFound(){const tot=AW.reduce((s,a)=>s+a[1],0);
  let r=Math.random()*tot,m=2;
  for(const a of AW){if(r<a[1]){m=a[0];break;}r-=a[1];}
  mult*=m;recalc();sfxArtifact();
- toast('🜲 EXPONENT ARTIFACT! Power ×'+m);uiDirty=true;}
+ toastEl.textContent='🜲 EXPONENT ARTIFACT! Power ×'+m;
+ toastEl.style.opacity=1;
+ clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.style.opacity=0,7800);
+ uiDirty=true;}
 // ================= CRAFTEO =================
 const RECIPES={
  'Torch':{req:{'Tin Can':2,'Coal':1}},
