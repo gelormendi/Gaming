@@ -196,7 +196,7 @@ const G=1.005; // metros por fila crece 0.5% por fila -> Abismo (~23.5MM) a ~234
 function rowDepth(r){ return r<=0?0:(Math.pow(G,r)-1)/(G-1); }
 
 // Capas: inicio en metros + HP (del Excel)
-const LB=[0,5,10,25,50,100,200,500,2000,10000,25000,1e5,1e6,1e7,2.35e7];
+const LB=[0,5,10,25,50,100,200,500,2000,10000,25000,1e5,1e6,1e7,2.35e7,5e7];
 const LAYERS=[
  {n:'Grass',hp:2,c1:'#7c5a35',c2:'#67492a',sp:'#8f6c40',ac:null,com:'Coal',rar:'Copper',jnk:'Tin Can',fos:'Fossil Snail'},
  {n:'Dirt',hp:25,c1:'#8a6238',c2:'#73512d',sp:'#9c7144',ac:null,com:'Coal',rar:'Copper',jnk:'Old Screw',fos:'Fossil Shell'},
@@ -213,6 +213,7 @@ const LAYERS=[
  {n:'Mid Core',hp:1e9,c1:'#71290e',c2:'#591f0a',sp:'#8a3613',ac:'#ff7043',com:'Core Gem',rar:'Primordial Essence',jnk:'Lost Technology',fos:'Mantle Creature'},
  {n:'Inner Core',hp:1e12,c1:'#4d0e35',c2:'#3a0a28',sp:'#611345',ac:'#e040fb',com:'Primordial Essence',rar:'Stellar Heart',jnk:'Alien Technology',fos:'Petrified Leviathan'},
  {n:'A B Y S S',hp:1e15,abyss:true,c1:'#170024',c2:'#0d0015',sp:'#23063a',ac:'#b388ff',com:'Void Crystal',rar:'Mythrite',jnk:'Alien Artifact',fos:'Void Fossil'},
+ {n:'Radioactive Stone',hp:1e18,abyss:true,c1:'#0d1f0d',c2:'#071407',sp:'#163516',ac:'#39ff14',com:'Uranium Ore',rar:'Plutonium',jnk:'Radioactive Waste',fos:'Glowing Fossil'},
 ];
 const ITEMS={'Torch':80,'Small Drill':800,
  'Tin Can':1,'Old Screw':4,'Coal':6,'Copper':18,'Iron':60,'Broken Gear':45,
@@ -222,6 +223,7 @@ const ITEMS={'Torch':80,'Small Drill':800,
  'Stellar Iron':2e6,'Core Gem':5e6,'Ancient Machinery':1e6,
  'Primordial Essence':2e9,'Lost Technology':1e9,'Stellar Heart':2.5e12,'Alien Technology':1e12,
  'Void Crystal':2.5e15,'Mythrite':6e15,'Alien Artifact':1.5e15,
+ 'Uranium Ore':2e16,'Plutonium':1e17,'Radioactive Waste':5e15,'Glowing Fossil':2e17,
  'Fossil Snail':15,'Fossil Shell':40,'Fossil Fern':150,'Trilobite':500,'Fossil Fish':1800,
  'Ammonite':5000,'Amber Insect':18000,'Dinosaur Bone':80000,'Raptor Skull':150000,
  'Dinosaur Egg':350000,'Fossil Megalodon':1e6,'Impossible Fossil':1.2e7,
@@ -234,6 +236,7 @@ const ICOL={'Torch':'#ffb74d','Small Drill':'#b0bec5',
  'Volcanic Relic':'#bf360c','Stellar Iron':'#b0bec5','Core Gem':'#ffb300','Ancient Machinery':'#78909c',
  'Primordial Essence':'#e040fb','Lost Technology':'#7e57c2','Stellar Heart':'#ff80ab','Alien Technology':'#69f0ae',
  'Void Crystal':'#b388ff','Mythrite':'#84ffff','Alien Artifact':'#76ff03',
+ 'Uranium Ore':'#39ff14','Plutonium':'#ccff00','Radioactive Waste':'#7fff00','Glowing Fossil':'#b3ff00',
  'Fossil Snail':'#e8dcc0','Fossil Shell':'#e8dcc0','Fossil Fern':'#a5c98a','Trilobite':'#cbbfa3',
  'Fossil Fish':'#d7ccb0','Ammonite':'#d9b98a','Amber Insect':'#ffc04d','Dinosaur Bone':'#f0e6cc',
  'Raptor Skull':'#f0e6cc','Dinosaur Egg':'#cfd8a8','Fossil Megalodon':'#b8c4cc',
@@ -248,6 +251,7 @@ const IICO={
  'Volcanic Relic':'🌊','Stellar Iron':'⭐','Core Gem':'💠','Ancient Machinery':'⚗️',
  'Primordial Essence':'🌀','Lost Technology':'💾','Stellar Heart':'💜','Alien Technology':'🛸',
  'Void Crystal':'🔮','Mythrite':'✨','Alien Artifact':'👾',
+ 'Uranium Ore':'☢️','Plutonium':'🟢','Radioactive Waste':'🧪','Glowing Fossil':'💀',
  'Fossil Snail':'🐌','Fossil Shell':'🐚','Fossil Fern':'🌿','Trilobite':'🦐',
  'Fossil Fish':'🐟','Ammonite':'🌀','Amber Insect':'🐛','Dinosaur Bone':'🦴',
  'Raptor Skull':'💀','Dinosaur Egg':'🥚','Fossil Megalodon':'🦈',
