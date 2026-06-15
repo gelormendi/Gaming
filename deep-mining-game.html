@@ -351,18 +351,75 @@ addEventListener('contextmenu',e=>{
 let actx=null,master=null,ambGain=null,musicGain=null;
 
 // ================= MUSIC =================
-// 90 BPM — C minor feel
-const MB=60/90; // seconds per beat
+// Per-layer music: bpm, mel[], bas[], mt=melody osc type, bt=bass osc type, mv=melody vol, bv=bass vol
 // [freq_hz, beats]  0 = rest
-const MELO=[
- [392,.5],[311,.5],[349,.5],[392,.5],[466,1],[392,.5],[349,.5],
- [311,1],[261,.5],[311,.5],[349,1],[311,.5],[261,.5],[233,2],[0,1],
- [349,.5],[311,.5],[261,.5],[311,.5],[392,1],[349,.5],[311,.5],
- [261,1],[233,.5],[261,.5],[311,1],[261,2],[0,1]];
-const BASS=[
- [131,2],[98,2],[117,2],[175,2],
- [131,2],[156,2],[175,2],[131,2]];
-let mI=0,bI=0,mT=0,bT=0;
+const LMUS=[
+ // 0 Grass — C major pentatonic, light & cheerful, 88 BPM
+ {bpm:88,mt:'triangle',bt:'triangle',mv:.18,bv:.20,
+  mel:[[523,.5],[659,.5],[784,.5],[880,.5],[784,.5],[659,.5],[523,1],[0,.5]],
+  bas:[[131,2],[196,2],[131,2],[196,2]]},
+ // 1 Dirt — C major, walking bass, 95 BPM
+ {bpm:95,mt:'triangle',bt:'triangle',mv:.19,bv:.22,
+  mel:[[523,.5],[659,.5],[784,.5],[988,.5],[784,.5],[698,.5],[587,.5],[523,1]],
+  bas:[[131,2],[175,2],[196,2],[131,2]]},
+ // 2 Hard Dirt — C major w/ Ab colour, 102 BPM
+ {bpm:102,mt:'triangle',bt:'triangle',mv:.19,bv:.22,
+  mel:[[523,.5],[587,.5],[659,.5],[784,.5],[415,.5],[392,.5],[330,.5],[294,1]],
+  bas:[[131,2],[196,2],[208,2],[196,2]]},
+ // 3 Very Hard Dirt — A natural minor, 108 BPM
+ {bpm:108,mt:'triangle',bt:'square',mv:.20,bv:.23,
+  mel:[[440,.5],[523,.5],[659,.5],[698,.5],[659,.5],[587,.5],[523,.5],[440,1]],
+  bas:[[110,2],[165,2],[110,2],[147,2]]},
+ // 4 Rock — A natural minor, rhythmic rests, 115 BPM
+ {bpm:115,mt:'triangle',bt:'square',mv:.21,bv:.25,
+  mel:[[440,.5],[0,.5],[523,.5],[659,.5],[0,.5],[784,.5],[659,.5],[587,1]],
+  bas:[[110,2],[0,1],[110,1],[165,2]]},
+ // 5 Hard Rock — D Dorian, square, 122 BPM
+ {bpm:122,mt:'square',bt:'square',mv:.20,bv:.26,
+  mel:[[587,.5],[698,.5],[784,.5],[880,.5],[0,.5],[784,.5],[698,.5],[659,1]],
+  bas:[[147,2],[0,1],[220,1],[147,2]]},
+ // 6 Very Hard Rock — E Phrygian (dark), 130 BPM
+ {bpm:130,mt:'square',bt:'square',mv:.21,bv:.26,
+  mel:[[659,.5],[698,.5],[0,.5],[784,.5],[659,.5],[698,.5],[784,.5],[659,1]],
+  bas:[[165,2],[175,1],[0,1],[165,2]]},
+ // 7 Basalt — C# harmonic minor, sawtooth, slow 75 BPM
+ {bpm:75,mt:'sawtooth',bt:'sawtooth',mv:.22,bv:.28,
+  mel:[[277,.5],[330,.5],[415,.5],[494,.5],[415,.5],[330,.5],[277,1],[0,.5]],
+  bas:[[139,2],[208,2],[139,2],[0,2]]},
+ // 8 Hard Basalt — B harmonic minor, very grave, 68 BPM
+ {bpm:68,mt:'sawtooth',bt:'sawtooth',mv:.22,bv:.28,
+  mel:[[247,.5],[294,.5],[370,.5],[466,.5],[370,.5],[294,.5],[247,1],[0,1]],
+  bas:[[123,2],[185,2],[123,2],[0,2]]},
+ // 9 Very Hard Basalt — diminished scale, sinister, 60 BPM
+ {bpm:60,mt:'sawtooth',bt:'sawtooth',mv:.23,bv:.29,
+  mel:[[262,.5],[311,.5],[370,.5],[440,.5],[0,1],[370,.5],[311,.5],[0,1]],
+  bas:[[131,2],[185,2],[0,2],[131,2]]},
+ // 10 Volcanic Stone — D melodic minor ascending, frantic, 145 BPM
+ {bpm:145,mt:'square',bt:'sawtooth',mv:.24,bv:.30,
+  mel:[[294,.5],[330,.5],[349,.5],[392,.5],[440,.5],[494,.5],[554,.5],[587,.5]],
+  bas:[[147,2],[220,2],[147,2],[233,2]]},
+ // 11 Outer Core — tritone arpeggios, sci-fi, 90 BPM
+ {bpm:90,mt:'sine',bt:'square',mv:.17,bv:.24,
+  mel:[[523,.5],[740,.5],[622,.5],[466,.5],[370,.5],[311,.5],[262,.5],[0,1]],
+  bas:[[131,2],[0,1],[185,1],[131,2]]},
+ // 12 Mid Core — sparse atonal, eerie, 70 BPM
+ {bpm:70,mt:'sine',bt:'sine',mv:.15,bv:.20,
+  mel:[[262,1],[0,1],[370,1],[0,2],[233,1],[0,2]],
+  bas:[[65,4],[0,2],[98,2],[0,4]]},
+ // 13 Inner Core — tone clusters, crushing, 55 BPM
+ {bpm:55,mt:'sine',bt:'sine',mv:.14,bv:.18,
+  mel:[[262,2],[0,1],[277,1],[0,2],[247,2],[0,1],[349,2],[0,2]],
+  bas:[[65,4],[0,4],[65,4],[0,4]]},
+ // 14 A B Y S S — drones + rare stabs, near-silence, 40 BPM
+ {bpm:40,mt:'sine',bt:'sine',mv:.12,bv:.15,
+  mel:[[131,4],[0,4],[185,2],[0,6],[131,4],[0,8]],
+  bas:[[33,8],[0,8],[33,8],[0,8]]},
+ // 15 Radioactive Stone — glitch chaos, 160 BPM
+ {bpm:160,mt:'square',bt:'square',mv:.28,bv:.32,
+  mel:[[523,.25],[554,.25],[587,.25],[523,.25],[466,.25],[523,.25],[622,.25],[523,.25]],
+  bas:[[147,.5],[139,.5],[147,.5],[185,.5]]}
+];
+let mI=0,bI=0,mT=0,bT=0,curMusLyr=-1;
 
 function mNote(f,dur,vol,type){if(!actx||!musicGain||f===0)return;
  const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();
@@ -376,9 +433,12 @@ function musicTick(dt){if(!musicGain)return;
  const on=settings.music&&running;
  musicGain.gain.value+=((on?0.11:0)-musicGain.gain.value)*0.05;
  if(!on)return;
+ const lyr=Math.min(15,Math.max(0,layerIdxOfRow(Math.max(0,player.gy))));
+ if(lyr!==curMusLyr){curMusLyr=lyr;mI=0;bI=0;mT=0;bT=0;}
+ const tk=LMUS[lyr],beat=60/tk.bpm;
  mT-=dt;bT-=dt;
- if(mT<=0){const[f,d]=MELO[mI%MELO.length];mT=d*MB;mNote(f,d*MB*0.85,0.22,'triangle');mI++;}
- if(bT<=0){const[f,d]=BASS[bI%BASS.length];bT=d*MB;mNote(f,d*MB*0.75,0.28,'square');bI++;}}
+ if(mT<=0){const[f,d]=tk.mel[mI%tk.mel.length];mT=d*beat;if(f>0)mNote(f,d*beat*0.85,tk.mv,tk.mt);mI++;}
+ if(bT<=0){const[f,d]=tk.bas[bI%tk.bas.length];bT=d*beat;if(f>0)mNote(f,d*beat*0.75,tk.bv,tk.bt);bI++;}}
 
 function audioInit(){if(actx)return;
  actx=new (window.AudioContext||window.webkitAudioContext)();
@@ -424,6 +484,12 @@ function mineTick(x,y,dt){const k=x+','+y;
 function hitBlock(x,y){const L=layerOfRow(y),k=x+','+y;
  if(layerIdxOfRow(y)>=4&&!(inv.get('Torch')||0)){
   if(!hitBlock.tc||perf-hitBlock.tc>3){toast('🔦 You need a Torch to go deeper');hitBlock.tc=perf;}
+  return;}
+ if(layerIdxOfRow(y)>=14&&lvl<25){
+  if(!hitBlock.al||perf-hitBlock.al>3){toast('⛏ Pickaxe Lv.25 required for the Abyss');hitBlock.al=perf;}
+  return;}
+ if(layerIdxOfRow(y)>=15&&lvl<50){
+  if(!hitBlock.rl||perf-hitBlock.rl>3){toast('⛏ Pickaxe Lv.50 required for Radioactive Stone');hitBlock.rl=perf;}
   return;}
  let hp=damaged.has(k)?damaged.get(k):L.hp;
  hp-=pickDmg*WX().dmg;player.swing=0.16;sfxHit();spawnSparks(x,y);
@@ -571,12 +637,14 @@ function onWeather(){const w=WX();
 function regenTerrain(){regenT=0;
  dug.clear();damaged.clear();
  player.mv=null;player.mining=null;
- // if stuck deep without torch, rescue to surface
- if(layerIdxOfRow(Math.max(0,player.gy))>=4&&!(inv.get('Torch')||0)){
+ // rescue checks: no torch at Rock+, or under-leveled at Abyss+
+ const pLyr=layerIdxOfRow(Math.max(0,player.gy));
+ function rescueSurface(msg){
   player.gx=W>>1;player.gy=-1;player.px=player.gx*TILE;player.py=player.gy*TILE;
-  camX=0;camY=-260;
-  noiseSfx(0.9,150,0.3,'lowpass');
-  toast('🌍 Terrain regenerated! No torch — rescued to surface.');return;}
+  camX=0;camY=-260;noiseSfx(0.9,150,0.3,'lowpass');toast(msg);}
+ if(pLyr>=4&&!(inv.get('Torch')||0)){rescueSurface('🌍 Terrain regenerated! No torch — rescued to surface.');return;}
+ if(pLyr>=15&&lvl<50){rescueSurface('🌍 Terrain regenerated! Need Lv.50 — rescued to surface.');return;}
+ if(pLyr>=14&&lvl<25){rescueSurface('🌍 Terrain regenerated! Need Lv.25 — rescued to surface.');return;}
  player.px=player.gx*TILE;player.py=player.gy*TILE;
  for(let yy=player.gy;yy>=Math.max(0,player.gy-2);yy--)dug.add(player.gx+','+yy);
  noiseSfx(0.9,150,0.3,'lowpass');toast('🌍 Terrain regenerated!');}
@@ -788,7 +856,9 @@ document.getElementById('drillBtn').addEventListener('click',useDrill);
 function uiTick(){
  elDepth.textContent=fmtDepth(depth);
  elRec.textContent='Record: '+fmtDepth(record);
- elLayer.textContent=LAYERS[curLi].n+' · '+blocksMined+' blocks';
+ const lyrReq=curLi>=15?'⛏Lv.50':curLi>=14?'⛏Lv.25':'';
+ const lyrLock=lyrReq&&lvl<(curLi>=15?50:25)?` 🔒${lyrReq}`:'';
+ elLayer.textContent=LAYERS[curLi].n+lyrLock+' · '+blocksMined+' blocks';
  const wt=Math.max(0,weatherT);
  const wts=Math.floor(wt/60)+':'+String(Math.floor(wt%60)).padStart(2,'0');
  wTime.textContent=wts;
