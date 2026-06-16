@@ -52,8 +52,10 @@ canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
 .tpBtn{flex:1;padding:6px 4px;font-family:inherit;font-weight:bold;font-size:11px;color:#e7dcff;background:#3a2d63;border:2px solid #5d4b94;border-radius:5px;cursor:pointer}
 .tpBtn:active{background:#5d4b94}
 /* ===== Móvil / táctil ===== */
-body{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-canvas{touch-action:none}
+canvas{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#dpad,.dbtn{touch-action:none;-webkit-user-select:none;user-select:none}
+#side{touch-action:pan-y;-webkit-user-select:text;user-select:text;-webkit-overflow-scrolling:touch}
+#invList{-webkit-overflow-scrolling:touch;overflow-y:scroll}
 #topbar,#menuBtn,#buyFab,#dpad{display:none}
 #topbar{position:absolute;top:0;left:0;right:0;z-index:8;background:rgba(17,14,28,.82);border-bottom:2px solid #2c2440;padding:6px 52px 6px 10px;font-size:13px;font-weight:bold;justify-content:space-between;align-items:center;gap:8px;white-space:nowrap}
 #topbar span{overflow:hidden;text-overflow:ellipsis}
