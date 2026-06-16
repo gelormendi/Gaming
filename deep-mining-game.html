@@ -54,8 +54,6 @@ canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
 /* ===== Móvil / táctil ===== */
 canvas{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 #dpad,.dbtn{touch-action:none;-webkit-user-select:none;user-select:none}
-#side{touch-action:pan-y;-webkit-user-select:text;user-select:text;-webkit-overflow-scrolling:touch}
-#invList{-webkit-overflow-scrolling:touch;overflow-y:scroll}
 #topbar,#menuBtn,#buyFab,#dpad{display:none}
 #topbar{position:absolute;top:0;left:0;right:0;z-index:8;background:rgba(17,14,28,.82);border-bottom:2px solid #2c2440;padding:6px 52px 6px 10px;font-size:13px;font-weight:bold;justify-content:space-between;align-items:center;gap:8px;white-space:nowrap}
 #topbar span{overflow:hidden;text-overflow:ellipsis}
@@ -68,8 +66,10 @@ canvas{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch
 #dUp{grid-area:1/2}#dLeft{grid-area:2/1}#dRight{grid-area:2/3}#dDown{grid-area:3/2}
 @media(pointer:coarse){#dpad{display:grid}#buyFab{display:block}}
 @media(max-width:700px){
- #side{position:fixed;top:0;right:0;bottom:0;width:min(300px,85vw);z-index:20;transform:translateX(105%);transition:transform .25s;box-shadow:-6px 0 20px rgba(0,0,0,.6)}
+ #side{position:fixed;top:0;right:0;bottom:0;width:min(300px,85vw);z-index:20;transform:translateX(105%);transition:transform .25s;box-shadow:-6px 0 20px rgba(0,0,0,.6);overflow-y:scroll;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
  #side.open{transform:none}
+ .inv{flex:none}
+ #invList{overflow-y:visible;max-height:none}
  #topbar{display:flex}#menuBtn{display:flex}
  #overlay h1{font-size:24px}
  #banner{font-size:22px;letter-spacing:3px}
@@ -846,6 +846,8 @@ const tDepth=document.getElementById('tDepth'),tMoney=document.getElementById('t
  tWeather=document.getElementById('tWeather'),buyFab=document.getElementById('buyFab'),
  sideEl=document.getElementById('side'),menuBtn=document.getElementById('menuBtn');
 menuBtn.addEventListener('click',()=>sideEl.classList.toggle('open'));
+sideEl.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true});
+sideEl.addEventListener('touchmove',e=>e.stopPropagation(),{passive:true});
 buyFab.addEventListener('click',buy);
 const tpInfo=document.getElementById('tpInfo');
 document.getElementById('tpUp').addEventListener('click',()=>teleport(W>>1,-1));
