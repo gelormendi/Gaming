@@ -136,6 +136,11 @@ canvas{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch
       <div class="row"><span>Damage</span><b id="pdmg">1</b></div>
       <div class="row"><span>Exponent</span><b id="pmul" style="color:#b388ff">×1</b></div>
       <button id="buy">UPGRADE — $50 [E]</button>
+      <div id="rebirthPanel" style="display:none;margin-top:8px;border-top:1px solid #322a4d;padding-top:8px">
+        <div class="row" style="margin-bottom:4px"><span style="color:#ff6e6e">🔄 Rebirths</span><b id="rbCount" style="color:#ff6e6e">0</b></div>
+        <div class="row" style="margin-bottom:6px"><span>DMG bonus</span><b id="rbMult" style="color:#ff9e9e">×1</b></div>
+        <button id="rebirthBtn" style="width:100%;padding:7px;font-family:inherit;font-weight:bold;font-size:11px;color:#fff;background:#7b1515;border:2px solid #c62828;border-radius:5px;cursor:pointer">🔄 REBIRTH — $1M</button>
+      </div>
     </div>
     <div class="panel" id="tpPanel" style="display:none">
       <div class="lbl">ELEVATOR</div>
@@ -310,7 +315,19 @@ let depth=0, record=SV?SV.record||0:0, blocksMined=SV?SV.blocksMined||0:0, curLi
 const inv=new Map((SV&&SV.inv)||[]);
 const locked=new Set((SV&&SV.locked)||[]);
 let uiDirty=true, invDirty=true, running=false, perf=0;
-function recalc(){pickDmg=Math.pow(1.3,lvl-1)*mult;cost=50*Math.pow(1.5,lvl-1);}
+// ===== REBIRTH =====
+const REBIRTH_BASE_COST=1e6;
+let rebirths=SV?SV.rebirths||0:0;
+let rebirthCost=SV?SV.rebirthCost||REBIRTH_BASE_COST:REBIRTH_BASE_COST;
+let rebirthUnlocked=record>=LB[10];
+function rebirthMult(){return Math.pow(1.5,rebirths);}
+function recalc(){pickDmg=Math.pow(1.3,lvl-1)*mult*rebirthMult();cost=50*Math.pow(1.5,lvl-1);}
+function doRebirth(){
+ if(!rebirthUnlocked||money<rebirthCost)return;
+ money=0;invValue=0;lvl=1;
+ rebirths++;rebirthCost*=2;
+ recalc();saveGame();uiDirty=true;invDirty=true;
+ toast('🔄 Rebirth #'+rebirths+'! Base DMG ×'+fmt(rebirthMult()));}
 // Ascensor
 let tpUnlocked=!!(SV&&SV.tpu), deepX=SV&&SV.dx!==undefined?SV.dx:(W>>1), deepY=SV&&SV.dy!==undefined?SV.dy:-1;
 const player={gx:SV?SV.gx:W>>1,gy:SV?SV.gy:-1,px:0,py:0,mv:null,face:1,mining:null,mineX:0,mineY:0,hitT:0,swing:0};
@@ -318,6 +335,7 @@ player.px=player.gx*TILE;player.py=player.gy*TILE;
 function saveGame(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({seed:SEED,money,invValue,lvl,mult,record,blocksMined,
  gx:player.gx,gy:player.gy,inv:[...inv],dug:[...dug],dmg:[...damaged],
  tpu:tpUnlocked?1:0,dx:deepX,dy:deepY,locked:[...locked],
+ rebirths,rebirthCost,
  set:{p:settings.sndPick?1:0,l:settings.sndLoot?1:0,m:settings.music?1:0,r:settings.regenMin}}));}catch(e){}}
 setInterval(()=>{if(running)saveGame();},5000);
 let resetting=false;
@@ -854,6 +872,12 @@ document.getElementById('tpUp').addEventListener('click',()=>teleport(W>>1,-1));
 document.getElementById('tpDown').addEventListener('click',()=>{if(deepY>0)teleport(deepX,deepY);});
 if(tpUnlocked)document.getElementById('tpPanel').style.display='';
 document.getElementById('sellAllBtn').addEventListener('click',sellAll);
+const rebirthPanel=document.getElementById('rebirthPanel');
+const rebirthBtn=document.getElementById('rebirthBtn');
+const rbCount=document.getElementById('rbCount');
+const rbMult=document.getElementById('rbMult');
+rebirthBtn.addEventListener('click',doRebirth);
+if(rebirthUnlocked)rebirthPanel.style.display='';
 document.getElementById('craftTorch').addEventListener('click',()=>craft('Torch'));
 document.getElementById('craftDrill').addEventListener('click',()=>craft('Small Drill'));
 document.getElementById('drillBtn').addEventListener('click',useDrill);
@@ -877,6 +901,13 @@ function uiTick(){
   elMul.textContent='×'+fmt(mult);
   buyBtn.textContent='UPGRADE — $'+fmt(cost)+' [E]';
   buyBtn.disabled=money<cost;
+  if(!rebirthUnlocked&&record>=LB[10]){rebirthUnlocked=true;rebirthPanel.style.display='';toast('🔄 Rebirth unlocked! Reset coins & level, keep your Exponent.');}
+  if(rebirthUnlocked){
+   rbCount.textContent=rebirths;
+   rbMult.textContent='×'+fmt(rebirthMult());
+   rebirthBtn.textContent='🔄 REBIRTH — $'+fmt(rebirthCost);
+   rebirthBtn.disabled=money<rebirthCost;
+   rebirthBtn.style.background=money>=rebirthCost?'#b71c1c':'#7b1515';}
   tpInfo.textContent='Deepest: '+fmtDepth(record)+' · [T] toggle';
   document.getElementById('craftTorch').disabled=!canCraft('Torch');
   document.getElementById('craftDrill').disabled=!canCraft('Small Drill');
