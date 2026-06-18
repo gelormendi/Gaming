@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="favicon-512.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q5HHCVT454"></script>
   <script>
@@ -11,13 +15,46 @@
     gtag('config', 'G-Q5HHCVT454');
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Deep Mining — Free Browser Game | Il Barto Gaming</title>
-  <meta name="description" content="Play Deep Mining for free in your browser. Dig underground, collect rare minerals, manage your inventory, and upgrade your gear. No download required.">
-  <meta name="keywords" content="deep mining game, browser mining game, free html5 game, idle mining, pixel game">
-  <meta property="og:title" content="Deep Mining — Il Barto Gaming">
-  <meta property="og:description" content="Dig deep, collect rare minerals and upgrade your gear. Free browser game, no download needed.">
+  <title>Deep Mining — Free Idle Mining Browser Game | Il Barto Gaming</title>
+  <meta name="description" content="Play Deep Mining free in your browser. Dig through 16 underground layers, collect rare minerals and fossils, craft tools, upgrade your pickaxe and descend to the Abyss. No download, no account.">
+  <meta name="keywords" content="deep mining game, free mining browser game, idle mining game, incremental mining game, underground mining game, pickaxe upgrade game, mineral collecting game, mining idle clicker, browser idle game, free online mining game, geology game, deep mining online, HTML5 mining game">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Il Barto Gaming">
+  <!-- Open Graph -->
+  <meta property="og:title" content="Deep Mining — Free Idle Mining Browser Game">
+  <meta property="og:description" content="Dig through 16 underground layers, collect rare minerals and fossils, craft tools and upgrade your pickaxe. Free browser game, no download needed.">
   <meta property="og:type" content="website">
-  <link rel="canonical" href="https://ilbartogaming.com/deep-mining.html">
+  <meta property="og:url" content="https://ilbartogaming.com/deep-mining">
+  <meta property="og:image" content="https://ilbartogaming.com/logo.png">
+  <meta property="og:site_name" content="Il Barto Gaming">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Deep Mining — Free Idle Mining Browser Game">
+  <meta name="twitter:description" content="Dig through 16 underground layers, collect rare minerals and fossils, craft tools and upgrade your pickaxe. Free, no download.">
+  <meta name="twitter:image" content="https://ilbartogaming.com/logo.png">
+  <link rel="canonical" href="https://ilbartogaming.com/deep-mining">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "Deep Mining",
+    "description": "An idle browser game where you dig through 16 underground layers, collect rare minerals and fossils, craft tools, upgrade your pickaxe and descend to the Abyss.",
+    "url": "https://ilbartogaming.com/deep-mining-game",
+    "image": "https://ilbartogaming.com/logo.png",
+    "genre": ["Idle", "Incremental", "Mining", "Casual"],
+    "playMode": "SinglePlayer",
+    "applicationCategory": "Game",
+    "operatingSystem": "Any",
+    "browserRequirements": "HTML5",
+    "inLanguage": "en",
+    "isAccessibleForFree": true,
+    "publisher": {
+      "@type": "Organization",
+      "name": "Il Barto Gaming",
+      "url": "https://ilbartogaming.com"
+    }
+  }
+  </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;800&display=swap');
 
@@ -289,6 +326,26 @@
       font-size: 0.85rem;
     }
     footer strong { color: #fff; font-family: 'Fredoka One', cursive; }
+    footer a { color: var(--yellow); text-decoration: none; }
+    .social-links { display:flex; justify-content:center; gap:16px; margin: 20px 0 8px; }
+    .social-links a, .social-links span {
+      display:flex; align-items:center; justify-content:center;
+      width:44px; height:44px; border-radius:50%;
+      transition: transform .2s, opacity .2s;
+    }
+    .social-links a { background:rgba(255,255,255,0.12); }
+    .social-links a:hover { transform:scale(1.15); opacity:1; }
+    .social-links a svg { width:22px; height:22px; fill:#fff; }
+    .social-links .soon {
+      background:rgba(255,255,255,0.05); opacity:0.35; cursor:not-allowed; position:relative;
+    }
+    .social-links .soon svg { width:22px; height:22px; fill:#d8b8ff; }
+    .social-links .soon::after {
+      content:'Coming soon'; position:absolute; bottom:-28px; left:50%; transform:translateX(-50%);
+      background:#1a0a2e; color:#d8b8ff; font-size:10px; padding:3px 7px; border-radius:4px;
+      white-space:nowrap; opacity:0; transition:opacity .2s; pointer-events:none;
+    }
+    .social-links .soon:hover::after { opacity:1; }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 780px) {
@@ -419,8 +476,22 @@
 <!-- FOOTER -->
 <footer>
   <strong>Il Barto Gaming</strong><br><br>
-  Free browser mini games — play anywhere, anytime.<br><br>
-  &copy; 2026 Il Barto Gaming. All rights reserved.
+  Free browser mini games — play anywhere, anytime.
+  <div class="social-links">
+    <a href="https://www.youtube.com/@ILbartoGaming" target="_blank" rel="noopener" aria-label="YouTube">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+    </a>
+    <span class="soon" aria-label="TikTok – Coming soon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.6 3h-3.2v11.4a2.8 2.8 0 1 1-2.8-2.8c.3 0 .5 0 .8.1V8.4a6 6 0 1 0 5.2 5.9V7.8a8.4 8.4 0 0 0 4.9 1.6V6.2A5 5 0 0 1 19.6 3z"/></svg>
+    </span>
+    <span class="soon" aria-label="Instagram – Coming soon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.6 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.8-.1C3.7 21.6 2.1 20 2 16.8 2 15.5 2 15.2 2 12s0-3.5.1-4.8C2.2 3.9 3.7 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zm0-2.2C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1.1 8.3 0 8.7 0 12s0 3.7.1 4.9C.3 21.3 2.7 23.7 7.1 23.9 8.3 24 8.7 24 12 24s3.7 0 4.9-.1c4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9C23.7 2.7 21.3.3 16.9.1 15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 1 0 0 12.4A6.2 6.2 0 0 0 12 5.8zm0 10.2a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.8a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8z"/></svg>
+    </span>
+    <span class="soon" aria-label="X – Coming soon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.9 1h3.7l-8 9.2L24 23h-7.4l-5.8-7.5L4.3 23H.6l8.6-9.8L0 1h7.6l5.2 6.8L18.9 1zm-1.3 19.8h2L6.5 3.2H4.3l13.3 17.6z"/></svg>
+    </span>
+  </div>
+  <br>&copy; 2026 Il Barto Gaming. All rights reserved.
 </footer>
 
 </body>
