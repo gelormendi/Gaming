@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Exclude backup/versioned files
+Disallow: /deep-mining-gameOLD.html
+Disallow: /deep-mining-game_061426.html
+Disallow: /deep-mining-game06152026.html
+Disallow: /deep-mining-game_06172026.html
+
+Sitemap: https://ilbartogaming.com/sitemap.xml
