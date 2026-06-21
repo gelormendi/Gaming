@@ -1,11 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="favicon-512.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q5HHCVT454"></script>
 <script>
@@ -15,53 +11,16 @@
   gtag('config', 'G-Q5HHCVT454');
 </script>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Play Deep Mining — Free Online Mining Game | Il Barto Gaming</title>
-<meta name="description" content="Play Deep Mining free online. Dig underground, collect minerals and fossils, craft torches and drills, upgrade your pickaxe and reach the Abyss. Browser game, no download required.">
-<meta name="keywords" content="play deep mining, deep mining free, mining game play online, browser mining game, pickaxe game, idle clicker mining, upgrade mining game, mineral game online, no download mining game, free mining game, HTML5 mining">
-<meta name="robots" content="index, follow">
-<meta name="author" content="Il Barto Gaming">
-<!-- Open Graph -->
-<meta property="og:title" content="Play Deep Mining — Free Online Mining Game">
-<meta property="og:description" content="Dig underground, collect minerals and fossils, craft tools and upgrade your pickaxe. Free browser game, no download needed.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://ilbartogaming.com/deep-mining-game">
-<meta property="og:image" content="https://ilbartogaming.com/logo.png">
-<meta property="og:site_name" content="Il Barto Gaming">
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Play Deep Mining — Free Online Mining Game">
-<meta name="twitter:description" content="Dig underground, collect minerals and fossils, craft tools and upgrade your pickaxe. Free, no download.">
-<meta name="twitter:image" content="https://ilbartogaming.com/logo.png">
-<link rel="canonical" href="https://ilbartogaming.com/deep-mining-game">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "VideoGame",
-  "name": "Deep Mining",
-  "description": "Play Deep Mining free in your browser. Dig through 16 underground layers, collect rare minerals and fossils, craft tools, upgrade your pickaxe and reach the Abyss.",
-  "url": "https://ilbartogaming.com/deep-mining-game",
-  "image": "https://ilbartogaming.com/logo.png",
-  "genre": ["Idle", "Incremental", "Mining", "Casual"],
-  "playMode": "SinglePlayer",
-  "applicationCategory": "Game",
-  "operatingSystem": "Any",
-  "browserRequirements": "HTML5",
-  "inLanguage": "en",
-  "isAccessibleForFree": true,
-  "publisher": {
-    "@type": "Organization",
-    "name": "Il Barto Gaming",
-    "url": "https://ilbartogaming.com"
-  }
-}
-</script>
+<title>Deep Mining</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;background:#0b0a12;color:#dcd6ee;font-family:'Courier New',monospace;overflow:hidden}
 #wrap{display:flex;height:100vh}
 #cvbox{flex:1;position:relative;min-width:0}
 canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
-#side{width:280px;background:#15121f;border-left:3px solid #2c2440;padding:10px;display:flex;flex-direction:column;gap:10px}
+#side{width:280px;background:#15121f;border-left:3px solid #2c2440;padding:10px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;overflow-x:hidden}
+#side::-webkit-scrollbar{width:5px}
+#side::-webkit-scrollbar-thumb{background:#322a4d;border-radius:3px}
 .panel{background:#1d1830;border:2px solid #322a4d;border-radius:6px;padding:8px 10px}
 .lbl{font-size:10px;letter-spacing:2px;color:#8d80b8}
 .big{font-size:22px;font-weight:bold}
@@ -70,10 +29,8 @@ canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
 .row{display:flex;justify-content:space-between;font-size:13px;margin-top:4px}
 #buy{margin-top:8px;width:100%;padding:7px;font-family:inherit;font-weight:bold;font-size:12px;color:#1a1408;background:#ffd54f;border:2px solid #b8932a;border-radius:5px;cursor:pointer}
 #buy:disabled{background:#494261;color:#8d80b8;border-color:#322a4d;cursor:not-allowed}
-.inv{flex:1;display:flex;flex-direction:column;min-height:0}
-#invList{flex:1;overflow-y:auto;margin-top:6px}
-#invList::-webkit-scrollbar{width:6px}
-#invList::-webkit-scrollbar-thumb{background:#322a4d;border-radius:3px}
+.inv{flex:none;display:flex;flex-direction:column}
+#invList{overflow-y:visible;margin-top:6px}
 .it{display:flex;align-items:center;gap:6px;font-size:12px;padding:3px 2px;border-radius:3px}
 .dot{width:10px;height:10px;flex:none;border-radius:2px;box-shadow:0 0 4px rgba(255,255,255,.25)}
 .ico{font-size:14px;line-height:1;flex:none;width:18px;text-align:center}
@@ -90,6 +47,12 @@ canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
 .craftReq{font-size:10px;color:#9b8fc4;margin-top:2px}
 .craftBtn{padding:4px 8px;font-family:inherit;font-weight:bold;font-size:11px;color:#1a1408;background:#80cbc4;border:2px solid #4db6ac;border-radius:5px;cursor:pointer}
 .craftBtn:disabled{background:#494261;color:#8d80b8;border-color:#322a4d;cursor:not-allowed}
+#invFilters{display:flex;gap:3px;margin:5px 0 3px;flex-wrap:wrap}
+.fBtn{background:#1e1535;border:1px solid #3d2e6e;color:#fff;width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:15px;padding:0;line-height:1;transition:background .15s,border-color .15s}
+.fBtn:hover{background:#2d1f50;border-color:#7b52d3}
+.fBtn.fActive{background:#3b1f6e;border-color:#9c6bff;box-shadow:0 0 7px #9c6bff66}
+.gfx{font-size:9px;color:#ce93d8;padding:1px 4px 2px;letter-spacing:.3px}
+.geoWrap{display:contents}
 #invActions{display:flex;gap:4px;margin:6px 0 2px}
 .invActBtn{flex:1;padding:5px 4px;font-family:inherit;font-weight:bold;font-size:10px;color:#1a1408;background:#ffd54f;border:2px solid #b8932a;border-radius:5px;cursor:pointer}
 .invActBtn:disabled{background:#494261;color:#8d80b8;border-color:#322a4d;cursor:not-allowed}
@@ -218,6 +181,14 @@ canvas{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch
     </div>
     <div class="panel inv">
       <div class="lbl">INVENTORY</div>
+      <div id="invFilters">
+        <button class="fBtn fActive" data-cat="all" title="All items">📦</button>
+        <button class="fBtn" data-cat="min" title="Minerals &amp; gems">💎</button>
+        <button class="fBtn" data-cat="jnk" title="Junk">⚙️</button>
+        <button class="fBtn" data-cat="fos" title="Fossils">🦴</button>
+        <button class="fBtn" data-cat="tls" title="Tools">🔧</button>
+        <button class="fBtn" data-cat="geo" title="Geode minerals">🟣</button>
+      </div>
       <div id="invActions">
         <button class="invActBtn" id="sellAllBtn">💰 Sell all</button>
       </div>
@@ -285,7 +256,8 @@ const ITEMS={'Torch':80,'Small Drill':800,
  'Fossil Snail':15,'Fossil Shell':40,'Fossil Fern':150,'Trilobite':500,'Fossil Fish':1800,
  'Ammonite':5000,'Amber Insect':18000,'Dinosaur Bone':80000,'Raptor Skull':150000,
  'Dinosaur Egg':350000,'Fossil Megalodon':1e6,'Impossible Fossil':1.2e7,
- 'Mantle Creature':1.2e10,'Petrified Leviathan':6e12,'Void Fossil':1.5e16};
+ 'Mantle Creature':1.2e10,'Petrified Leviathan':6e12,'Void Fossil':1.5e16,
+ 'Amethyst':5000,'Quartz Crystal':12000,'Gold Chunk':40000,'Precious Opal':150000,'Flawless Diamond':800000};
 const ICOL={'Torch':'#ffb74d','Small Drill':'#b0bec5',
  'Tin Can':'#aab2b8','Old Screw':'#8d8d8d','Coal':'#3a3a3a','Copper':'#ff8a50',
  'Iron':'#c9c9c9','Broken Gear':'#9e9e7e','Silver':'#e8e8f0','Gold':'#ffd54f','Ancient Coin':'#d4af37',
@@ -298,7 +270,8 @@ const ICOL={'Torch':'#ffb74d','Small Drill':'#b0bec5',
  'Fossil Snail':'#e8dcc0','Fossil Shell':'#e8dcc0','Fossil Fern':'#a5c98a','Trilobite':'#cbbfa3',
  'Fossil Fish':'#d7ccb0','Ammonite':'#d9b98a','Amber Insect':'#ffc04d','Dinosaur Bone':'#f0e6cc',
  'Raptor Skull':'#f0e6cc','Dinosaur Egg':'#cfd8a8','Fossil Megalodon':'#b8c4cc',
- 'Impossible Fossil':'#ffe57f','Mantle Creature':'#ff8a65','Petrified Leviathan':'#f48fb1','Void Fossil':'#d1c4e9'};
+ 'Impossible Fossil':'#ffe57f','Mantle Creature':'#ff8a65','Petrified Leviathan':'#f48fb1','Void Fossil':'#d1c4e9',
+ 'Amethyst':'#ce93d8','Quartz Crystal':'#e0f7fa','Gold Chunk':'#ffd54f','Precious Opal':'#ff9800','Flawless Diamond':'#40c4ff'};
 // Item icons (emoji)
 const IICO={
  'Torch':'🔦','Small Drill':'🔩',
@@ -313,7 +286,29 @@ const IICO={
  'Fossil Snail':'🐌','Fossil Shell':'🐚','Fossil Fern':'🌿','Trilobite':'🦐',
  'Fossil Fish':'🐟','Ammonite':'🌀','Amber Insect':'🐛','Dinosaur Bone':'🦴',
  'Raptor Skull':'💀','Dinosaur Egg':'🥚','Fossil Megalodon':'🦈',
- 'Impossible Fossil':'❓','Mantle Creature':'🐙','Petrified Leviathan':'🐉','Void Fossil':'👁️'};
+ 'Impossible Fossil':'❓','Mantle Creature':'🐙','Petrified Leviathan':'🐉','Void Fossil':'👁️',
+ 'Amethyst':'🟣','Quartz Crystal':'🔷','Gold Chunk':'🏅','Precious Opal':'🌈','Flawless Diamond':'💠'};
+// Item categories for inventory filter
+const ICAT={
+ 'Torch':'tls','Small Drill':'tls',
+ 'Tin Can':'jnk','Old Screw':'jnk','Coal':'jnk','Broken Gear':'jnk','Radioactive Waste':'jnk','Alien Artifact':'jnk',
+ 'Copper':'min','Iron':'min','Silver':'min','Gold':'min','Ancient Coin':'min','Emerald':'min','Diamond':'min','Metal Plate':'min',
+ 'Ruby':'min','Obsidian':'min','Buried Relic':'min','Igneous Topaz':'min','Magma Crystal':'min','Fire Opal':'min','Volcanic Relic':'min',
+ 'Stellar Iron':'min','Core Gem':'min','Ancient Machinery':'min',
+ 'Primordial Essence':'min','Lost Technology':'min','Stellar Heart':'min','Alien Technology':'min',
+ 'Void Crystal':'min','Mythrite':'min','Uranium Ore':'min','Plutonium':'min','Glowing Fossil':'min',
+ 'Fossil Snail':'fos','Fossil Shell':'fos','Fossil Fern':'fos','Trilobite':'fos','Fossil Fish':'fos',
+ 'Ammonite':'fos','Amber Insect':'fos','Dinosaur Bone':'fos','Raptor Skull':'fos',
+ 'Dinosaur Egg':'fos','Fossil Megalodon':'fos','Impossible Fossil':'fos',
+ 'Mantle Creature':'fos','Petrified Leviathan':'fos','Void Fossil':'fos',
+ 'Amethyst':'geo','Quartz Crystal':'geo','Gold Chunk':'geo','Precious Opal':'geo','Flawless Diamond':'geo'};
+// Geode effect descriptions per item
+const GFXLBL={
+ 'Amethyst':'💰 +1% coins/each',
+ 'Quartz Crystal':'⚔️ +0.01 dmg/each',
+ 'Gold Chunk':'🎁 +1% loot/each',
+ 'Precious Opal':'🎲 +2% art.luck/each',
+ 'Flawless Diamond':'⚔️ +10% dmg · 💰 +50% coins/each'};
 // Artefacto Exponente: roll de multiplicador (pesos ~ % acordados: 50,25,12.5,7.25,3,1,0.5 ... 0.09 a la 20)
 const AW=[[2,5000],[3,2500],[4,1250],[5,725],[6,150],[7,150],[8,50],[9,50],[10,50],
  [11,40],[12,35],[13,30],[14,25],[15,20],[16,17],[17,15],[18,13],[19,11],[20,9]];
@@ -372,7 +367,16 @@ let rebirths=SV?SV.rebirths||0:0;
 let rebirthCost=SV?SV.rebirthCost||REBIRTH_BASE_COST:REBIRTH_BASE_COST;
 let rebirthUnlocked=record>=LB[10];
 function rebirthMult(){return Math.pow(1.5,rebirths);}
-function recalc(){pickDmg=Math.pow(1.3,lvl-1)*mult*rebirthMult();cost=50*Math.pow(1.5,lvl-1);}
+// ===== GEODES =====
+const GEODE_HP=600;
+const geodes=new Set();
+function geoCount(name){return inv.get(name)||0;}
+function gCoinMult(){return(1+geoCount('Amethyst')*0.01+geoCount('Flawless Diamond')*0.5);}
+function gDmgFlat(){return geoCount('Quartz Crystal')*0.01+geoCount('Flawless Diamond')*0.1;}
+function gLootBonus(){return 1+geoCount('Gold Chunk')*0.01;}
+function gArtLuck(){return 0.001*(1+geoCount('Precious Opal')*0.02);}
+function gDmgMult(){return 1+geoCount('Flawless Diamond')*0.1;}
+function recalc(){pickDmg=(Math.pow(1.3,lvl-1)+gDmgFlat())*mult*rebirthMult()*gDmgMult();cost=50*Math.pow(1.5,lvl-1);}
 function doRebirth(){
  if(!rebirthUnlocked||money<rebirthCost)return;
  money=0;invValue=0;lvl=1;
@@ -562,22 +566,36 @@ function hitBlock(x,y){const L=layerOfRow(y),k=x+','+y;
  if(layerIdxOfRow(y)>=15&&lvl<50){
   if(!hitBlock.rl||perf-hitBlock.rl>3){toast('⛏ Pickaxe Lv.50 required for Radioactive Stone');hitBlock.rl=perf;}
   return;}
+ // Geode block
+ if(geodes.has(k)){
+  const gk='g'+k;
+  let ghp=damaged.has(gk)?damaged.get(gk):GEODE_HP;
+  ghp-=pickDmg*WX().dmg;player.swing=0.16;sfxHit();spawnSparks(x,y);
+  if(ghp<=0){damaged.delete(gk);geodes.delete(k);dug.add(k);player.mining=null;rollGeode(x,y);}
+  else damaged.set(gk,ghp);
+  return;}
  let hp=damaged.has(k)?damaged.get(k):L.hp;
  hp-=pickDmg*WX().dmg;player.swing=0.16;sfxHit();spawnSparks(x,y);
  if(hp<=0){damaged.delete(k);dug.add(k);player.mining=null;onBreak(x,y,L);}
  else damaged.set(k,hp);}
 function onBreak(x,y,L){sfxBreak();blocksMined++;spawnDebris(x,y,L);
+ const k=x+','+y;
  if(!tpUnlocked&&L.n.indexOf('Basalt')===0){tpUnlocked=true;
   document.getElementById('tpPanel').style.display='';
   toast('🛗 ELEVATOR unlocked! Travel fast with [T] or the buttons');
   sfxLayer();uiDirty=true;}
- if(Math.random()<0.001)artifactFound();
- const r=Math.random(),lm=WX().loot;
+ if(Math.random()<gArtLuck())artifactFound();
+ // 5% chance to spawn a geode in place of this block
+ if(Math.random()<0.05){
+  dug.delete(k);geodes.add(k);
+  floaters.push({x:(x+0.5)*TILE,y:y*TILE-4,t:0,txt:'💜 Geode!',col:'#ce93d8',big:true});
+  uiDirty=true;return;}
+ const r=Math.random(),lm=WX().loot*gLootBonus();
  if(r<0.02*lm)giveItem(L.rar,x,y,2);
  else if(r<0.12*lm)giveItem(L.com,x,y,1);
  else if(r<0.195*lm)giveItem(L.jnk,x,y,0);
  else if(r<0.22*lm)giveItem(L.fos,x,y,2);
- else{const cash=(L.abyss?1e9:L.hp/10)*WX().money;money+=cash;uiDirty=true;
+ else{const cash=(L.abyss?1e9:L.hp/10)*WX().money*gCoinMult();money+=cash;uiDirty=true;
   floaters.push({x:(x+0.5)*TILE,y:y*TILE+8,t:0,txt:'+$'+fmt(cash),col:'#ffd54f',big:false});}
  uiDirty=true;}
 function giveItem(name,x,y,rare){const v=ITEMS[name]||10;
@@ -585,6 +603,21 @@ function giveItem(name,x,y,rare){const v=ITEMS[name]||10;
  floaters.push({x:(x+0.5)*TILE,y:y*TILE+8,t:0,txt:(IICO[name]||'◆')+' +$'+fmt(v),col:ICOL[name]||'#fff',big:rare>=1});
  glows.push({x:(x+0.5)*TILE,y:(y+0.5)*TILE,t:0,col:ICOL[name]||'#fff'});
  sfxItem(rare);uiDirty=true;invDirty=true;}
+function rollGeode(x,y){
+ const r=Math.random();
+ let name;
+ if(r<0.03125)name='Flawless Diamond';
+ else if(r<0.09375)name='Precious Opal';
+ else if(r<0.21875)name='Gold Chunk';
+ else if(r<0.46875)name='Quartz Crystal';
+ else name='Amethyst';
+ giveGeodeItem(name,x,y);}
+function giveGeodeItem(name,x,y){
+ inv.set(name,(inv.get(name)||0)+1);
+ const v=ITEMS[name]||0;invValue+=v;
+ floaters.push({x:(x+0.5)*TILE,y:y*TILE-4,t:0,txt:(IICO[name]||'💎')+' '+name,col:ICOL[name]||'#ce93d8',big:true});
+ glows.push({x:(x+0.5)*TILE,y:(y+0.5)*TILE,t:0,col:ICOL[name]||'#ce93d8'});
+ sfxItem(2);recalc();uiDirty=true;invDirty=true;}
 function artifactFound(){const tot=AW.reduce((s,a)=>s+a[1],0);
  let r=Math.random()*tot,m=2;
  for(const a of AW){if(r<a[1]){m=a[0];break;}r-=a[1];}
@@ -641,12 +674,15 @@ function useDrill(){if(!running||(inv.get('Small Drill')||0)<1)return;
 
 function sellItem(name){const c=inv.get(name)||0;if(!c)return;
  const v=(ITEMS[name]||0)*c;money+=v;invValue-=v;inv.delete(name);
+ if(ICAT[name]==='geo')recalc();
  sfxItem(1);toast('💰 Sold '+name+' ×'+c+' → +$'+fmt(v));
  uiDirty=true;invDirty=true;}
-function sellAll(){let total=0;
+function sellAll(){let total=0;let hadGeo=false;
  for(const[name,c]of inv){if(locked.has(name))continue;
+  if(ICAT[name]==='geo')hadGeo=true;
   total+=(ITEMS[name]||0)*c;invValue-=(ITEMS[name]||0)*c;inv.delete(name);}
  if(!total)return;
+ if(hadGeo)recalc();
  money+=total;
  sfxItem(2);toast('💰 Sold everything → +$'+fmt(total));
  uiDirty=true;invDirty=true;}
@@ -823,6 +859,18 @@ function render(){const cw=VW,ch=VH;
    if(x<0||x>=W){ctx.fillStyle='#08060d';ctx.fillRect(sx,sy,TILE,TILE);continue;}
    const k=x+','+y;
    if(dug.has(k)||isCave(x,y)){ctx.fillStyle=L.bg;ctx.fillRect(sx,sy,TILE,TILE);continue;}
+   if(geodes.has(k)){
+    ctx.fillStyle='#160028';ctx.fillRect(sx,sy,TILE,TILE);
+    ctx.fillStyle='#4a0082';ctx.fillRect(sx+2,sy+2,TILE-4,12);
+    ctx.fillStyle='#7b1fa2';ctx.fillRect(sx+5,sy+10,TILE-10,10);
+    ctx.fillStyle='#9c27b0';ctx.fillRect(sx+8,sy+18,TILE-16,8);
+    ctx.fillStyle='#ce93d8';ctx.fillRect(sx+11,sy+5,4,4);ctx.fillRect(sx+19,sy+12,3,3);
+    ctx.fillStyle='rgba(255,255,255,0.85)';ctx.fillRect(sx+13,sy+6,2,2);ctx.fillRect(sx+21,sy+18,1,1);
+    // shimmer dot using PRNG for variation
+    const gv=(h2(x,y)*7)|0;ctx.fillStyle='#ea80fc';ctx.fillRect(sx+4+gv,sy+20,2,2);
+    const gk2='g'+k;
+    if(damaged.has(gk2)){const st=Math.min(2,((1-damaged.get(gk2)/GEODE_HP)*3)|0);ctx.drawImage(crackTiles[st],sx,sy);}
+    continue;}
    ctx.drawImage(L.tiles[(h2(x,y)*3)|0],sx,sy);
    if(y===0){ctx.fillStyle='#3f9e3f';ctx.fillRect(sx,sy,TILE,6);
     ctx.fillStyle='#56c456';ctx.fillRect(sx,sy,TILE,3);}
@@ -968,13 +1016,19 @@ function uiTick(){
   document.getElementById('crReq1').textContent=
    '1× Iron ('+(inv.get('Iron')||0)+') · 2× Broken Gear ('+(inv.get('Broken Gear')||0)+')';}
  if(invDirty){invDirty=false;
-  const arr=[...inv.entries()].sort((a,b)=>(ITEMS[b[0]]||0)-(ITEMS[a[0]]||0));
-  invList.innerHTML=arr.map(([n,c])=>{const lk=locked.has(n);return(
-   '<div class="it"><span class="ico">'+(IICO[n]||'◆')+'</span>'+
+  const arr=[...inv.entries()]
+   .filter(([n])=>invFilter==='all'||(ICAT[n]||'min')===invFilter)
+   .sort((a,b)=>(ITEMS[b[0]]||0)-(ITEMS[a[0]]||0));
+  invList.innerHTML=arr.map(([n,c])=>{const lk=locked.has(n);
+   const isGeo=ICAT[n]==='geo';
+   const fxRow=isGeo?'<div class="gfx">'+GFXLBL[n]+'</div>':'';
+   return(
+   '<div class="it">'+(isGeo?'<div class="geoWrap">':'')+'<span class="ico">'+(IICO[n]||'◆')+'</span>'+
    '<span class="nm">'+n+'</span><span class="ct">×'+c+'</span>'+
    '<span class="vl">$'+fmt((ITEMS[n]||0)*c)+'</span>'+
    '<button class="iBtn lockBtn'+(lk?' lockOn':'')+'" data-name="'+n+'" title="Lock/unlock">'+(lk?'🔒':'🔓')+'</button>'+
    '<button class="iBtn sellBtn" data-name="'+n+'" title="Sell">💰</button>'+
+   (isGeo?'</div>':'')+fxRow+
    '</div>');}).join('');
   invList.querySelectorAll('.sellBtn').forEach(b=>b.addEventListener('click',()=>sellItem(b.dataset.name)));
   invList.querySelectorAll('.lockBtn').forEach(b=>b.addEventListener('click',()=>{
@@ -1010,6 +1064,13 @@ sPick.addEventListener('change',()=>{settings.sndPick=sPick.checked;saveGame();}
 sLoot.addEventListener('change',()=>{settings.sndLoot=sLoot.checked;saveGame();});
 sRegen.addEventListener('change',()=>{settings.regenMin=+sRegen.value;regenT=0;saveGame();
  toast(settings.regenMin>0?'🌍 Terrain regenerates every '+settings.regenMin+' min':'🌍 Regeneration disabled');});
+// ===== INVENTORY FILTER =====
+let invFilter='all';
+document.querySelectorAll('.fBtn').forEach(b=>{
+ b.addEventListener('click',()=>{
+  invFilter=b.dataset.cat;
+  document.querySelectorAll('.fBtn').forEach(x=>x.classList.toggle('fActive',x===b));
+  invDirty=true;});});
 makeTiles();fit();recalc();initWeatherFx();uiTick();render();
 requestAnimationFrame(loop);
 </script>
